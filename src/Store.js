@@ -1,7 +1,8 @@
-const redux = require('redux')
+const { createStore } = require('redux')
 const composedEnhacers = require('./Enhancers')
+const { fromJS } = require('immutable')
 
-const Store = redux.createStore(() => ({}), composedEnhacers)
+const Store = createStore((state = fromJS({})) => state, composedEnhacers)
 
 Store.Handlers = {}
 Store.Actions = {}

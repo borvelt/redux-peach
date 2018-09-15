@@ -1,8 +1,21 @@
 const merge = require('lodash/mergeWith')
-const reduxActions = require('redux-actions')
+const { handleActions } = require('redux-actions')
 const Store = require('./Store')
 const ActionSelector = require('./ActionSelector')
-const mergeCustomizer = require('./merge')
+
+const listeners = ['onStarted', 'onSucceed', 'onFailed', 'onEnded']
+
+const ActionHandler = props => {
+  if ('actionName' in props) {
+    _setHandler(props.actionName, props.onHappening)
+  } else {
+    if (listeners.find(element => element in props)) {
+      _getListener(props)
+    } else {
+      _setHandler(_getActionName(props), props.onHappening)
+    }
+  }
+}
 
 const _ActionHandler = handler => {
   Object.keys(handler).map(key => {
@@ -18,19 +31,7 @@ const _ActionHandler = handler => {
     }
   })
   const handlers = merge(Store.Handlers, handler)
-  Store.replaceReducer(reduxActions.handleActions(handlers, {}))
-}
-const listeners = ['onStarted', 'onSucceed', 'onFailed', 'onEnded']
-const ActionHandler = props => {
-  if ('actionName' in props) {
-    _setHandler(props.actionName, props.onHappening)
-  } else {
-    if (listeners.find(element => element in props)) {
-      _getListener(props)
-    } else {
-      _setHandler(_getActionName(props), props.onHappening)
-    }
-  }
+  Store.replaceReducer(handleActions(handlers, {}))
 }
 
 const _getListener = props => {
@@ -50,10 +51,14 @@ const _getActionName = (props, on = 'SUCCEED') => {
     : ActionSelector(props.name)[on]
 }
 
-const _setHandler = (selectedAction, onHappening = () => {}) => {
+const _setHandler = (
+  selectedAction,
+  onHappening = action => action.payload,
+) => {
   _ActionHandler({
-    [selectedAction]: (state, action) =>
-      merge({}, state, onHappening(action, state), mergeCustomizer),
+    [selectedAction]: (state, action) => {
+      return state.merge(onHappening(action, state))
+    },
   })
 }
 

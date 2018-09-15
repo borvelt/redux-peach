@@ -1,12 +1,11 @@
-const redux = require('redux')
+const { compose, applyMiddleware } = require('redux')
 const thunkMiddleware = require('redux-thunk').default
 
 let middlewares = [thunkMiddleware]
-if (process.env.__DEV__ === true) {
-}
+
 let enhancers = []
 
-module.exports = redux.compose(
-  redux.applyMiddleware(...middlewares),
+module.exports = compose(
+  applyMiddleware(...middlewares),
   ...enhancers,
 )

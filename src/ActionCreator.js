@@ -1,6 +1,18 @@
-const reduxActions = require('redux-actions')
+const { createAction } = require('redux-actions')
 const Store = require('./Store')
 const ActionSelector = require('./ActionSelector')
+
+const ActionCreator = props => {
+  try {
+    ActionSelector(props.name)
+  } catch (e) {
+    _ActionCreator(props.name, props.onDispatch, {
+      async: props.async,
+      payloadCreator: props.payloadCreator,
+      metaCreator: props.metaCreator,
+    })
+  }
+}
 
 const _ActionCreator = (
   TYPE,
@@ -21,22 +33,22 @@ const _ActionCreator = (
   const TYPE_ENDED = TYPE + '_ENDED'
 
   const actionCreators = {
-    [TYPE_STARTED]: reduxActions.createAction(
+    [TYPE_STARTED]: createAction(
       TYPE_STARTED,
       options.payloadCreator,
       options.metaCreator,
     ),
-    [TYPE_FAILED]: reduxActions.createAction(
+    [TYPE_FAILED]: createAction(
       TYPE_FAILED,
       options.payloadCreator,
       options.metaCreator,
     ),
-    [TYPE_SUCCEED]: reduxActions.createAction(
+    [TYPE_SUCCEED]: createAction(
       TYPE_SUCCEED,
       options.payloadCreator,
       options.metaCreator,
     ),
-    [TYPE_ENDED]: reduxActions.createAction(
+    [TYPE_ENDED]: createAction(
       TYPE_ENDED,
       options.payloadCreator,
       options.metaCreator,
@@ -100,26 +112,16 @@ const _ActionCreator = (
       return result
     }
   }
+
   if (options.async) {
     Object.assign(createAsync, payload)
     Store.Actions[TYPE] = createAsync
     return createAsync
   }
+
   Object.assign(create, payload)
   Store.Actions[TYPE] = create
   return create
-}
-
-const ActionCreator = props => {
-  try {
-    ActionSelector(props.name)
-  } catch (e) {
-    _ActionCreator(props.name, props.onDispatch, {
-      async: props.async,
-      payloadCreator: props.payloadCreator,
-      metaCreator: props.metaCreator,
-    })
-  }
 }
 
 module.exports = ActionCreator

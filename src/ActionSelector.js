@@ -1,4 +1,5 @@
 const Store = require('./Store')
+
 const ActionSelector = actionName => {
   const action = Store.Actions[actionName]
   if (typeof action === typeof undefined) {
