@@ -1,9 +1,10 @@
 const merge = require('lodash/mergeWith')
+const { List } = require('immutable')
 const { handleActions } = require('redux-actions')
 const Store = require('./Store')
 const ActionSelector = require('./ActionSelector')
 
-const listeners = ['onStarted', 'onSucceed', 'onFailed', 'onEnded']
+const listeners = List(['onStarted', 'onSucceed', 'onFailed', 'onEnded'])
 
 const ActionHandler = props => {
   if ('actionName' in props) {
@@ -19,30 +20,30 @@ const ActionHandler = props => {
 
 const _ActionHandler = handler => {
   Object.keys(handler).map(key => {
-    if (key in Store.Handlers) {
-      const func1 = Store.Handlers[key]
+    if (Store.Handlers.has(key)) {
+      const func1 = Store.Handlers.get(key)
       const func2 = handler[key]
-      Store.Handlers[key] = (state, action) => {
+      Store.Handlers = Store.Handlers.set(key, (state, action) => {
         let func1Result = func1(state, action)
         let func2Result = func2(func1Result, action)
-        return merge({}, func1Result, merge({}, state, func2Result))
-      }
+        return func1Result.merge(state.merge(func2Result))
+      })
       handler = {}
     }
   })
-  const handlers = merge(Store.Handlers, handler)
+  Store.Handlers = Store.Handlers.merge(handler)
+  const handlers = Store.Handlers.toJS()
   Store.replaceReducer(handleActions(handlers, {}))
 }
 
 const _getListener = props => {
-  for (let i in listeners) {
-    let listener = listeners[i]
+  listeners.map(listener => {
     if (listener in props) {
       let on = listener.replace('on', '').toUpperCase()
       let actionName = _getActionName(props, on)
       _setHandler(actionName, props[listener])
     }
-  }
+  })
 }
 
 const _getActionName = (props, on = 'SUCCEED') => {
@@ -56,9 +57,8 @@ const _setHandler = (
   onHappening = action => action.payload,
 ) => {
   _ActionHandler({
-    [selectedAction]: (state, action) => {
-      return state.merge(onHappening(action, state))
-    },
+    [selectedAction]: (state, action) =>
+      state.merge(onHappening(action, state)),
   })
 }
 

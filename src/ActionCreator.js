@@ -115,12 +115,14 @@ const _ActionCreator = (
 
   if (options.async) {
     Object.assign(createAsync, payload)
-    Store.Actions[TYPE] = createAsync
+    Store.Actions = Store.Actions.set(TYPE, createAsync)
+    // Store.Actions[TYPE] = createAsync
     return createAsync
   }
 
   Object.assign(create, payload)
-  Store.Actions[TYPE] = create
+  Store.Actions = Store.Actions.set(TYPE, create)
+  // Store.Actions[TYPE] = create
   return create
 }
 
