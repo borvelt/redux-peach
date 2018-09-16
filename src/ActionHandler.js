@@ -1,4 +1,3 @@
-const merge = require('lodash/mergeWith')
 const { List } = require('immutable')
 const { handleActions } = require('redux-actions')
 const Store = require('./Store')
