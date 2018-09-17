@@ -27,14 +27,14 @@ const _ActionCreator = (
     metaCreator: undefined,
   },
 ) => {
-  const TYPE_STARTED = TYPE + '_STARTED'
-  const TYPE_FAILED = TYPE + '_FAILED'
-  const TYPE_SUCCEED = TYPE + '_SUCCEED'
-  const TYPE_ENDED = TYPE + '_ENDED'
+  const TYPE_STARTED = `${TYPE}_STARTED`
+  const TYPE_FAILED = `${TYPE}_FAILED`
+  const TYPE_SUCCEED = `${TYPE}_SUCCEED`
+  const TYPE_ENDED = `${TYPE}_ENDED`
 
   const actionCreators = {
-    [TYPE_STARTED]: createAction(
-      TYPE_STARTED,
+    [TYPE_SUCCEED]: createAction(
+      TYPE_SUCCEED,
       options.payloadCreator,
       options.metaCreator,
     ),
@@ -43,8 +43,8 @@ const _ActionCreator = (
       options.payloadCreator,
       options.metaCreator,
     ),
-    [TYPE_SUCCEED]: createAction(
-      TYPE_SUCCEED,
+    [TYPE_STARTED]: createAction(
+      TYPE_STARTED,
       options.payloadCreator,
       options.metaCreator,
     ),
@@ -57,10 +57,14 @@ const _ActionCreator = (
 
   const payload = {
     TYPE,
-    STARTED: TYPE_STARTED,
     FAILED: TYPE_FAILED,
     SUCCEED: TYPE_SUCCEED,
+  }
+
+  const asyncPayload = {
+    ...payload,
     ENDED: TYPE_ENDED,
+    STARTED: TYPE_STARTED,
   }
 
   function createAsync(...args) {
@@ -75,6 +79,7 @@ const _ActionCreator = (
       )
       try {
         result = await onDispatch(...args, dispatch, getState)
+        console.log(result)
         dispatch(actionCreators[TYPE_SUCCEED](result))
       } catch (error) {
         dispatch(
@@ -114,15 +119,13 @@ const _ActionCreator = (
   }
 
   if (options.async) {
-    Object.assign(createAsync, payload)
+    Object.assign(createAsync, asyncPayload)
     Store.Actions = Store.Actions.set(TYPE, createAsync)
-    // Store.Actions[TYPE] = createAsync
     return createAsync
   }
 
   Object.assign(create, payload)
   Store.Actions = Store.Actions.set(TYPE, create)
-  // Store.Actions[TYPE] = create
   return create
 }
 

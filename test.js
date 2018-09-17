@@ -1,14 +1,22 @@
 const {
   DefaultStates,
-  Action,
+  ActionCreator,
   Store,
   ActionSelector,
   ActionHandler,
 } = require('./index')
 
-DefaultStates({ obstacleHiring: { list: [1, 2] }, Counter: 0 })
+DefaultStates({ users: { list: [1, 2] }, Counter: 0 })
 
-Action({
+ActionCreator({
+  name: 'INCREMENT',
+  async: true,
+  onDispatch: value => {
+    return new Promise(resolve => setTimeout(() => resolve(value), 1000))
+  },
+})
+
+ActionHandler({
   name: 'INCREMENT',
   onSucceed: (action, state) => ({
     Counter: state.get('Counter') + action.payload,
@@ -22,8 +30,14 @@ ActionHandler({
   }),
 })
 
-Store.dispatch(ActionSelector('INCREMENT')(1))
+ActionHandler({
+  name: 'INCREMENT',
+  onSucceed: (action, state) => ({
+    Counter: state.get('Counter') + action.payload + 10,
+  }),
+})
+
 Store.dispatch(ActionSelector('INCREMENT')(4))
 console.log('--------------------------------')
-console.log('StoreState: ', Store.getState())
+setTimeout(() => console.log('StoreState: ', Store.getState()), 2000)
 console.log('--------------------------------')
