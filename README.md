@@ -130,7 +130,7 @@ Store.dispatch(ActionSelector('INCREMENT')(4)) //Increment state.Counter by 4
 
 If we want to look on states we see this:
 ```javascript 
-console.log(Store.getState()) // Map { "users": Map { "list": List [ 1, 2 ] }, "Counter": 58 }
+console.log(Store.getState()) // Map { "users": Map { "list": List [ 1, 2 ] }, "Counter": 52 }
 ```
 
 ## Async Actions
@@ -159,4 +159,7 @@ If you loot at `DefaultStates.js` you can see how we use this function.
     onDispatchArgs: props, // Args for Dispatch Action 
     onSucceed: action => action.payload, // After dispatch action was succeed, this function will run.
   })
+```
+```javascript 
+console.log(Store.getState()) // Map { "users": Map { "list": List [ 1, 2 ] }, "Counter": 58 }
 ```
