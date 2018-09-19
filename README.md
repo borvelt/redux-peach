@@ -154,7 +154,7 @@ ActionCreator({
 If you loot at `DefaultStates.js` you can see how we use this function.
 ```javascript
   Action({
-    selfDispatch: true, // This will Dispatch action immidiatly after defining.
+    selfDispatch: true, // This will Dispatch action immediately after defining.
     name: 'DEFAULT_STATE_SET',
     onDispatchArgs: props, // Args for Dispatch Action 
     onSucceed: action => action.payload, // After dispatch action was succeed, this function will run.
