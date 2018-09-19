@@ -18,7 +18,9 @@ this is `redux-peach` do exactly.
 
 **redux-peach** is a wrapper. It helps you to understand states and manage states with redux and also helps you to use powerfull libraries like **redux-action** and **redux-thunk** in your projects easier, with immutated states.
 
-I think `react-boilerplate` is highly scalable and it predict all project situations and solve problems.
+I think 
+[react-boilerplate](https://github.com/react-boilerplate/react-boilerplate)
+ is highly scalable and it predict all project situations and solve problems.
 In this boilerplate you see that every part of project will be load separately and will load with lazy loading.
 I mean when you need Component Box that time this will load, not earlier.
 
@@ -27,7 +29,7 @@ Containers Contain Components, routes, actions, reducers, selectors and other th
 
 many times we need to define one action in Component A and handle defined action in B,C,D Components.
 It's good solution that handle this action in reducer of other components but we know that use redux without `redux-actions` is messy and we have first problem that I mentioned above.
-If we use `redux-actions` we can't hanlde one action with two or more function and we have to make separate actions and this will make application scaffold weak.
+If we use `redux-actions` we can't handle one action with two or more function and we have to make separate actions and this will make application scaffold weak.
 
 `redux-peach` have both of this we can handle actions with two or more functions to run, with same action name and clean scaffold in addition you can use redux middlewares every where you want and very simple.
 ## Concepts
