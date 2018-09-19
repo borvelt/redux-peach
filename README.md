@@ -151,7 +151,7 @@ ActionCreator({
 ```
 
 ## Work with Action
-If you loot at `DefaultStates.js` you can see how we use this function.
+If you look at `DefaultStates.js` you can see how we use this function.
 ```javascript
   Action({
     selfDispatch: true, // This will Dispatch action immediately after defining.
