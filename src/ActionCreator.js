@@ -79,7 +79,6 @@ const _ActionCreator = (
       )
       try {
         result = await onDispatch(...args, dispatch, getState)
-        console.log(result)
         dispatch(actionCreators[TYPE_SUCCEED](result))
       } catch (error) {
         dispatch(

@@ -12,7 +12,7 @@ ActionCreator({
   name: 'INCREMENT',
   async: true,
   onDispatch: value => {
-    return new Promise(resolve => setTimeout(() => resolve(value), 1000))
+    return new Promise(resolve => setTimeout(() => resolve(value + 2), 1000))
   },
 })
 
@@ -26,7 +26,7 @@ ActionHandler({
 ActionHandler({
   name: 'INCREMENT',
   onSucceed: (action, state) => ({
-    Counter: state.get('Counter') + action.payload * 10,
+    Counter: state.get('Counter') + action.payload + 30,
   }),
 })
 
@@ -40,4 +40,5 @@ ActionHandler({
 Store.dispatch(ActionSelector('INCREMENT')(4))
 console.log('--------------------------------')
 setTimeout(() => console.log('StoreState: ', Store.getState()), 2000)
+// console.log(Store.getState())
 console.log('--------------------------------')
