@@ -94,9 +94,14 @@ You just need to define your default states every where you want:
 DefaultStates({ users: { list: ['Jim', 'Jack', 'Paul'] }, Counter: 0 })
 ```
 Now make your Action:
+
+[payloadCreator and metaCreator definition](https://redux-actions.js.org/api/createaction#createactiontype-payloadcreator-metacreator)
 ```javascript
 ActionCreator({
   name: 'INCREMENT', // You can define a constants
+  payloadCreator: undefined,
+  metaCreator: undefined,
+  // You can add payloadCreator and metaCreator as described in redux-actions library.
 })
 ```
 Now define your ActionHandler:
@@ -143,7 +148,6 @@ ActionCreator({
   name: 'INCREMENT',
   async: true, // Make action async
   onDispatch: (value, dispatch, getState) => { // This is middleware args from dispatch action and dispatch and getState will come in as a function arguments.
-
     // In this example (4 + 2) will pass to actionHandlers after 1 Second.
     return new Promise(resolve => setTimeout(() => resolve(value + 2), 1000))
   },
