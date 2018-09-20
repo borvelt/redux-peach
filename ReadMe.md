@@ -163,3 +163,10 @@ If you look at `DefaultStates.js` you can see how we use this function.
 ```javascript 
 console.log(Store.getState()) // Map { "users": Map { "list": List [ 1, 2 ] }, "Counter": 58 }
 ```
+## Test
+Run tests with `npm test`.
+Test framework is jest.
+
+Current tests is not unit test exactly and just check base functionality.
+
+Need More TESTS!!!!

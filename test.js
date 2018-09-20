@@ -15,30 +15,28 @@ ActionCreator({
     return new Promise(resolve => setTimeout(() => resolve(value + 2), 1000))
   },
 })
+const action = Store.Actions.get('INCREMENT')
+console.log(action)
+// ActionHandler({
+//   name: 'INCREMENT',
+//   onSucceed: (action, state) => ({
+//     Counter: state.get('Counter') + action.payload,
+//   }),
+// })
 
-ActionHandler({
-  name: 'INCREMENT',
-  onSucceed: (action, state) => ({
-    Counter: state.get('Counter') + action.payload,
-  }),
-})
+// ActionHandler({
+//   name: 'INCREMENT',
+//   onSucceed: (action, state) => ({
+//     Counter: state.get('Counter') + action.payload + 30,
+//   }),
+// })
 
-ActionHandler({
-  name: 'INCREMENT',
-  onSucceed: (action, state) => ({
-    Counter: state.get('Counter') + action.payload + 30,
-  }),
-})
+// ActionHandler({
+//   name: 'INCREMENT',
+//   onSucceed: (action, state) => ({
+//     Counter: state.get('Counter') + action.payload + 10,
+//   }),
+// })
 
-ActionHandler({
-  name: 'INCREMENT',
-  onSucceed: (action, state) => ({
-    Counter: state.get('Counter') + action.payload + 10,
-  }),
-})
-
-Store.dispatch(ActionSelector('INCREMENT')(4))
-console.log('--------------------------------')
-setTimeout(() => console.log('StoreState: ', Store.getState()), 2000)
-// console.log(Store.getState())
-console.log('--------------------------------')
+// Store.dispatch(ActionSelector('INCREMENT')(4))
+// setTimeout(() => console.log('StoreState: ', Store.getState()), 2000)
