@@ -1,6 +1,6 @@
 {
   "name": "redux-peach",
-  "version": "1.0.13",
+  "version": "1.0.0",
   "description": "Eat Redux Like Peach",
   "main": "index.js",
   "scripts": {
@@ -11,14 +11,20 @@
     "testRegex": "src/__tests__/.*\\.test\\.js$"
   },
   "keywords": [
-    "Redux",
-    "State",
-    "Manager",
-    "Peach",
-    "redux-peach"
+    "wrapper",
+    "helper",
+    "state-manager",
+    "immutable",
+    "redux",
+    "redux-actions",
+    "redux-thunk",
+    "redux-middleware",
+    "redux-peach",
+    "redux-scaffold",
+    "redux-boilerplate"
   ],
   "author": "“borvelt” <“borvelt@gmail.com”> (http://borvelt.com)",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "dependencies": {
     "immutable": "^3.8.2",
     "redux": "^4.0.0",
