@@ -1,9 +1,32 @@
-const { createStore } = require('redux')
-const composedEnhacers = require('./Enhancers')
-const { Map, fromJS } = require('immutable')
+const CreateStore = require('./CreateStore')
+const Actions = require('./Actions')
+const { DEFAULT_STATE_SET } = require('./Constants')
 
-const Store = createStore((state = fromJS({})) => state, composedEnhacers)
-Store.Handlers = Map({})
-Store.Actions = Map({})
+class Store {
+  constructor() {}
+  configure(props = { rootState: {}, middlewares: [], enhancers: [] }) {
+    this._ = CreateStore(props.rootState, props.middlewares, props.enhancers)
+  }
+
+  get actions() {
+    return new Actions(this)
+  }
+
+  get state() {
+    return this._.getState()
+  }
+
+  set state(newState) {
+    this.actions.new(DEFAULT_STATE_SET, {
+      selfDispatch: true,
+      onDispatchArgs: newState,
+      onSucceed: action => action.payload,
+    })
+  }
+
+  get dispatch() {
+    return this._.dispatch
+  }
+}
 
 module.exports = Store

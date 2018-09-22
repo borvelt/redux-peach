@@ -1,88 +1,121 @@
+const invariant = require('invariant')
+const isUndefined = require('lodash.isundefined')
 const { createAction } = require('redux-actions')
-const Store = require('./Store')
 const ActionSelector = require('./ActionSelector')
+const { _STARTED, _FAILED, _SUCCEED, _ENDED } = require('./Constants')
+const isReduxStore = require('./IsReduxStore')
 
-const ActionCreator = props => {
-  try {
-    ActionSelector(props.name)
-  } catch (e) {
-    _ActionCreator(props.name, props.onDispatch, {
-      async: props.async,
-      payloadCreator: props.payloadCreator,
-      metaCreator: props.metaCreator,
-    })
-  }
-}
-
-const _ActionCreator = (
-  TYPE,
-  onDispatch = (...args) => {
-    args.pop()
-    args.pop()
-    return args[0]
-  },
-  options = {
-    async: false,
-    payloadCreator: undefined,
-    metaCreator: undefined,
-  },
-) => {
-  const TYPE_STARTED = `${TYPE}_STARTED`
-  const TYPE_FAILED = `${TYPE}_FAILED`
-  const TYPE_SUCCEED = `${TYPE}_SUCCEED`
-  const TYPE_ENDED = `${TYPE}_ENDED`
-
-  const actionCreators = {
-    [TYPE_SUCCEED]: createAction(
-      TYPE_SUCCEED,
-      options.payloadCreator,
-      options.metaCreator,
-    ),
-    [TYPE_FAILED]: createAction(
-      TYPE_FAILED,
-      options.payloadCreator,
-      options.metaCreator,
-    ),
-    [TYPE_STARTED]: createAction(
-      TYPE_STARTED,
-      options.payloadCreator,
-      options.metaCreator,
-    ),
-    [TYPE_ENDED]: createAction(
-      TYPE_ENDED,
-      options.payloadCreator,
-      options.metaCreator,
-    ),
+class ActionCreator {
+  constructor(store) {
+    invariant(
+      isReduxStore(store._),
+      'ActionCreator should recieve Store instance.',
+    )
+    this._actionSelector = new ActionSelector(store)
+    this._store = store._
+    this._create = this._create.bind(this)
+    this._createAsync = this._createAsync.bind(this)
   }
 
-  const payload = {
-    TYPE,
-    FAILED: TYPE_FAILED,
-    SUCCEED: TYPE_SUCCEED,
+  create(props) {
+    invariant(!isUndefined(props), 'Props is Undefined')
+    invariant('name' in props, 'You have to define at least `name` property.')
+    let action
+    try {
+      action = this._actionSelector.get(props.name)
+    } catch (e) {
+      this.TYPE = props.name
+      if ('onDispatch' in props) {
+        this._onDispatch = props.onDispatch
+      }
+      this._makeTypes()
+      action = this._make({
+        async: props.async,
+        payloadCreator: props.payloadCreator,
+        metaCreator: props.metaCreator,
+      })
+    }
+    return action
   }
 
-  const asyncPayload = {
-    ...payload,
-    ENDED: TYPE_ENDED,
-    STARTED: TYPE_STARTED,
+  _makeTypes() {
+    this.TYPE_STARTED = `${this.TYPE + _STARTED}`
+    this.TYPE_FAILED = `${this.TYPE + _FAILED}`
+    this.TYPE_SUCCEED = `${this.TYPE + _SUCCEED}`
+    this.TYPE_ENDED = `${this.TYPE + _ENDED}`
   }
 
-  function createAsync(...args) {
+  _make(
+    options = {
+      async: false,
+      payloadCreator: undefined,
+      metaCreator: undefined,
+    },
+  ) {
+    this.actionCreators = {
+      [this.TYPE_SUCCEED]: createAction(
+        this.TYPE_SUCCEED,
+        options.payloadCreator,
+        options.metaCreator,
+      ),
+      [this.TYPE_FAILED]: createAction(
+        this.TYPE_FAILED,
+        options.payloadCreator,
+        options.metaCreator,
+      ),
+      [this.TYPE_STARTED]: createAction(
+        this.TYPE_STARTED,
+        options.payloadCreator,
+        options.metaCreator,
+      ),
+      [this.TYPE_ENDED]: createAction(
+        this.TYPE_ENDED,
+        options.payloadCreator,
+        options.metaCreator,
+      ),
+    }
+
+    const payload = {
+      TYPE: this.TYPE,
+      FAILED: this.TYPE_FAILED,
+      SUCCEED: this.TYPE_SUCCEED,
+    }
+
+    const asyncPayload = {
+      ...payload,
+      ENDED: this.TYPE_ENDED,
+      STARTED: this.TYPE_STARTED,
+    }
+
+    if (options.async) {
+      Object.assign(this._createAsync, asyncPayload)
+      this._store.Actions = this._store.Actions.set(
+        this.TYPE,
+        this._createAsync,
+      )
+      return this._createAsync
+    }
+    Object.assign(this._create, payload)
+    this._store.Actions = this._store.Actions.set(this.TYPE, this._create)
+    return this._create
+  }
+
+  _createAsync(...args) {
     return async (dispatch, getState) => {
       let result
       const startedAt = new Date().getTime()
       dispatch(
-        actionCreators[TYPE_STARTED]({
+        this.actionCreators[this.TYPE_STARTED]({
           startedAt,
           ...args,
         }),
       )
       try {
-        result = await onDispatch(...args, dispatch, getState)
-        dispatch(actionCreators[TYPE_SUCCEED](result))
+        result = await this._onDispatch(...args, dispatch, getState)
+        dispatch(this.actionCreators[this.TYPE_SUCCEED](result))
       } catch (error) {
         dispatch(
-          actionCreators[TYPE_FAILED]({
+          this.actionCreators[this.TYPE_FAILED]({
             errorMessage: error.message,
           }),
         )
@@ -90,7 +123,7 @@ const _ActionCreator = (
       }
       let endedAt = new Date().getTime()
       dispatch(
-        actionCreators[TYPE_ENDED]({
+        this.actionCreators[this.TYPE_ENDED]({
           endedAt: endedAt,
           elapsed: endedAt - startedAt,
         }),
@@ -99,15 +132,15 @@ const _ActionCreator = (
     }
   }
 
-  function create(...args) {
+  _create(...args) {
     return (dispatch, getState) => {
       let result
       try {
-        result = onDispatch(...args, dispatch, getState)
-        dispatch(actionCreators[TYPE_SUCCEED](result))
+        result = this._onDispatch(...args, dispatch, getState)
+        dispatch(this.actionCreators[this.TYPE_SUCCEED](result))
       } catch (error) {
         dispatch(
-          actionCreators[TYPE_FAILED]({
+          this.actionCreators[this.TYPE_FAILED]({
             errorMessage: error.message,
           }),
         )
@@ -117,15 +150,11 @@ const _ActionCreator = (
     }
   }
 
-  if (options.async) {
-    Object.assign(createAsync, asyncPayload)
-    Store.Actions = Store.Actions.set(TYPE, createAsync)
-    return createAsync
+  _onDispatch(...args) {
+    args.pop()
+    args.pop()
+    return args[0]
   }
-
-  Object.assign(create, payload)
-  Store.Actions = Store.Actions.set(TYPE, create)
-  return create
 }
 
 module.exports = ActionCreator

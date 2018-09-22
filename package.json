@@ -1,6 +1,6 @@
 {
   "name": "redux-peach",
-  "version": "1.0.3",
+  "version": "2.0.0",
   "description": "Eat Redux Like Peach",
   "main": "index.js",
   "scripts": {
@@ -27,6 +27,8 @@
   "license": "MIT",
   "dependencies": {
     "immutable": "^3.8.2",
+    "invariant": "^2.2.4",
+    "lodash.isundefined": "^3.0.1",
     "redux": "^4.0.0",
     "redux-actions": "^2.6.1",
     "redux-thunk": "^2.3.0"

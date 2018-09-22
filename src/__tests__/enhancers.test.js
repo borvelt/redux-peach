@@ -1,5 +1,11 @@
-const enchancer = require('../Enhancers')
+const EnhancerComposer = require('../Enhancers')
 
-test('Enchancer should be a function', () => {
-  expect(typeof enchancer).toBe(typeof (() => {}))
+describe('enhancers and middlewares as EnhancerComposer', () => {
+  it('should get middlewares and enhancers as array', () => {
+    expect(() => EnhancerComposer({}, 'enhancers')).toThrow()
+  })
+
+  it('should return function', () => {
+    expect(typeof EnhancerComposer).toBe(typeof (() => {}))
+  })
 })

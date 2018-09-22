@@ -1,14 +1,20 @@
-const Store = require('../Store')
+const store = require('../../index')
 const ActionSelector = require('../ActionSelector')
-const ActionCreator = require('../ActionCreator')
+const Actions = require('../Actions')
+const TEST = 'TEST'
 
-test('Select action with action name', () => {
-  ActionCreator({ name: 'TEST' })
-  const action = ActionSelector('TEST')
-  const action2 = Store.Actions.get('TEST')
-  expect(action).toBe(action2)
-  expect(action.TYPE).toEqual('TEST')
-})
-test('undefined action should throw error', () => {
-  expect(() => ActionSelector('TEST2')).toThrow()
+describe('test action selector', () => {
+  beforeAll(() => {
+    store.configure()
+  })
+  it('should pass store object', () => {
+    expect(() => ActionSelector({})).toThrow()
+  })
+  it('should return action', () => {
+    actions = new Actions(store)
+    actions.create(TEST)
+    const actionSelector = new ActionSelector(store)
+    const action = actionSelector.get(TEST)
+    expect(action.TYPE).toEqual(TEST)
+  })
 })

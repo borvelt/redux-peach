@@ -1,42 +1,35 @@
-const {
-  DefaultStates,
-  ActionCreator,
-  Store,
-  ActionSelector,
-  ActionHandler,
-} = require('./index')
+const store = require('./index')
 
-DefaultStates({ users: { list: [1, 2] }, Counter: 0 })
+store.configure({ rootState: { Counter: 0 } })
 
-ActionCreator({
-  name: 'INCREMENT',
+store.actions.create('INCREMENT', {
   async: true,
-  onDispatch: value => {
-    return new Promise(resolve => setTimeout(() => resolve(value + 2), 1000))
+  onDispatch(value) {
+    return new Promise(resolve =>
+      setTimeout(() => resolve(value * value), 1000),
+    )
   },
 })
-const action = Store.Actions.get('INCREMENT')
-console.log(action)
-// ActionHandler({
-//   name: 'INCREMENT',
-//   onSucceed: (action, state) => ({
-//     Counter: state.get('Counter') + action.payload,
-//   }),
-// })
 
-// ActionHandler({
-//   name: 'INCREMENT',
-//   onSucceed: (action, state) => ({
-//     Counter: state.get('Counter') + action.payload + 30,
-//   }),
-// })
+store.actions.handle('INCREMENT', {
+  onSucceed(action, state) {
+    return { Counter: state.get('Counter') + action.payload }
+  },
+})
 
-// ActionHandler({
-//   name: 'INCREMENT',
-//   onSucceed: (action, state) => ({
-//     Counter: state.get('Counter') + action.payload + 10,
-//   }),
-// })
+const increment = store.actions.get('INCREMENT')
 
-// Store.dispatch(ActionSelector('INCREMENT')(4))
-// setTimeout(() => console.log('StoreState: ', Store.getState()), 2000)
+store.dispatch(increment(4))
+
+store.actions.new('DECREMENT', {
+  onDispatch(value) {
+    return value * 2
+  },
+  selfDispatch: true,
+  onDispatchArgs: [66],
+  onSucceed(action, state) {
+    return { Counter: state.get('Counter') - action.payload }
+  },
+})
+
+setTimeout(() => console.log(store.state), 1001)
