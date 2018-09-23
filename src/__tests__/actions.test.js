@@ -35,7 +35,9 @@ describe('Actions class', () => {
 
   it('should create handler', () => {
     actions.handle(TEST)
-    expect(typeof store._.Handlers.get(TEST + _SUCCEED)).toBe(typeof (() => {}))
+    expect(
+      typeof store.toReduxStoreObject().Handlers.get(TEST + _SUCCEED),
+    ).toBe(typeof (() => {}))
   })
 
   it('should retrieve action', () => {
@@ -45,8 +47,8 @@ describe('Actions class', () => {
   it('should do both work, create action and handle it', () => {
     actions.new(TEST2)
     expect(actions.get(TEST2).TYPE).toBe(TEST2)
-    expect(typeof store._.Handlers.get(TEST2 + _SUCCEED)).toBe(
-      typeof (() => {}),
-    )
+    expect(
+      typeof store.toReduxStoreObject().Handlers.get(TEST2 + _SUCCEED),
+    ).toBe(typeof (() => {}))
   })
 })

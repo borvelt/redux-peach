@@ -14,12 +14,12 @@ const {
 
 class ActionHandler {
   constructor(store) {
+    this._store = store.toReduxStoreObject()
     invariant(
-      isReduxStore(store._),
+      isReduxStore(this._store),
       'ActionHandler should recieve Store instance.',
     )
     this._actionSelector = new ActionSelector(store)
-    this._store = store._
     this._listeners = List([ONSTARTED, ONSUCCEED, ONFAILED, ONENDED])
   }
 

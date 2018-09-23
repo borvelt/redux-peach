@@ -50,6 +50,6 @@ describe('Check definition', () => {
     actionCreator.create({ name: TEST })
   })
   it('should be define in store Actions', () => {
-    expect(store._.Actions.get(TEST).TYPE).toEqual(TEST)
+    expect(store.toReduxStoreObject().Actions.get(TEST).TYPE).toEqual(TEST)
   })
 })

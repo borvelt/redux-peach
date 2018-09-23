@@ -13,11 +13,11 @@ class Store {
       enhancers: [],
     },
   ) {
-    this._ = CreateStore(props.rootState, props.middlewares, props.enhancers)
+    this.__ = CreateStore(props.rootState, props.middlewares, props.enhancers)
   }
 
-  reduxStoreObject() {
-    return this._
+  toReduxStoreObject() {
+    return this.__
   }
 
   get actions() {
@@ -25,7 +25,7 @@ class Store {
   }
 
   get state() {
-    return this._.getState()
+    return this.toReduxStoreObject().getState()
   }
 
   set state(newState) {
@@ -37,7 +37,7 @@ class Store {
   }
 
   get dispatch() {
-    return this._.dispatch
+    return this.toReduxStoreObject().dispatch
   }
 }
 

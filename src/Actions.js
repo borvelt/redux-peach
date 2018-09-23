@@ -6,14 +6,14 @@ const isReduxStore = require('./IsReduxStore')
 
 class Actions {
   constructor(store) {
+    this._store = store.toReduxStoreObject()
     invariant(
-      isReduxStore(store._),
+      isReduxStore(this._store),
       'ActionCreator should recieve Store instance.',
     )
     this._actionCreator = new ActionCreator(store)
     this._actionHandler = new ActionHandler(store)
     this._actionSelector = new ActionSelector(store)
-    this._store = store._
   }
 
   new(name, props = {}) {

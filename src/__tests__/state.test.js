@@ -16,7 +16,7 @@ describe('Work with states', () => {
   })
 
   it('should return the same', () => {
-    expect(store.state.ids).toEqual(store._.getState().ids)
+    expect(store.state.ids).toEqual(store.toReduxStoreObject().getState().ids)
   })
 
   it('should return undefined', () => {

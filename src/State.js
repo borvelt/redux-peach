@@ -4,14 +4,14 @@ const { fromJS, Collection } = require('immutable')
 class State {
   constructor(rawState) {
     invariant(rawState instanceof Object, 'State should be javascript Object')
-    this._ = fromJS(rawState)
+    this.__ = fromJS(rawState)
   }
   static createInstance(rawState) {
     return new Proxy(new State(rawState), State.proxyHandler)
   }
 
   toImmutableObject() {
-    return this._
+    return this.__
   }
 
   merge(...args) {
@@ -19,7 +19,7 @@ class State {
       element =>
         element instanceof State ? element.toImmutableObject() : element,
     )
-    this._ = this._.merge(...args)
+    this.__ = this.__.merge(...args)
     return this
   }
 }
@@ -31,7 +31,7 @@ State.proxyHandler = {
     }
     let value
     try {
-      value = target._.get(key)
+      value = target.__.get(key)
       invariant(!value instanceof Collection)
       return value.toJS()
     } catch (ex) {

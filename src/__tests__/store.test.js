@@ -21,7 +21,7 @@ describe('Create Store Object', () => {
   })
 
   it('should show state currectly', () => {
-    expect(store.state).toBe(store._.getState())
+    expect(store.state).toBe(store.toReduxStoreObject().getState())
   })
 
   it('would set new state', () => {
@@ -42,6 +42,6 @@ describe('Create Store with pre defined rootState', () => {
   })
 
   it('should have same state', () => {
-    expect(store.state).toBe(store._.getState())
+    expect(store.state).toBe(store.toReduxStoreObject().getState())
   })
 })

@@ -4,11 +4,11 @@ const isReduxStore = require('./IsReduxStore')
 
 class ActionSelector {
   constructor(store) {
+    this._store = store.toReduxStoreObject()
     invariant(
-      isReduxStore(store._),
+      isReduxStore(this._store),
       'ActionSelector should recieve Store instance.',
     )
-    this._store = store._
   }
 
   get(actionName) {

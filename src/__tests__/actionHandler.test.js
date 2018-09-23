@@ -38,6 +38,8 @@ describe('Test actionHandler', () => {
 
   it('Should be define in store handlers', () => {
     actionHandler.create({ name: TEST })
-    expect(typeof store._.Handlers.get(TEST + _SUCCEED)).toBe(typeof (() => {}))
+    expect(
+      typeof store.toReduxStoreObject().Handlers.get(TEST + _SUCCEED),
+    ).toBe(typeof (() => {}))
   })
 })

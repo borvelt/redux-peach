@@ -1,5 +1,4 @@
 const store = require('./index')
-const State = require('./src/State')
 
 store.configure({
   rootState: { users: { list: ['Jim', 'Jack', 'Paul'] }, Counter: 0 },
