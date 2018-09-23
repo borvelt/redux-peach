@@ -32,7 +32,7 @@ State.proxyHandler = {
     let value
     try {
       value = target.__.get(key)
-      invariant(!value instanceof Collection)
+      invariant(!(value instanceof Collection), 'it`s not Collection Object')
       return value.toJS()
     } catch (ex) {
       return value

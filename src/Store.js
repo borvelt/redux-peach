@@ -1,6 +1,5 @@
 const CreateStore = require('./CreateStore')
 const Actions = require('./Actions')
-const State = require('./State')
 const { DEFAULT_STATE_SET } = require('./Constants')
 
 class Store {

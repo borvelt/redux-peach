@@ -11,7 +11,7 @@ describe('test action selector', () => {
     expect(() => ActionSelector({})).toThrow()
   })
   it('should return action', () => {
-    actions = new Actions(store)
+    const actions = new Actions(store)
     actions.create(TEST)
     const actionSelector = new ActionSelector(store)
     const action = actionSelector.get(TEST)
