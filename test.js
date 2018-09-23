@@ -1,7 +1,10 @@
 const store = require('./index')
 const State = require('./src/State')
 
-store.configure({ rootState: { Counter: 0 } })
+store.configure({
+  rootState: { users: { list: ['Jim', 'Jack', 'Paul'] }, Counter: 0 },
+})
+
 store.actions.create('INCREMENT', {
   async: true,
   onDispatch(value) {
@@ -37,6 +40,8 @@ store.actions.new('DECREMENT', {
     return { Counter: state.Counter - action.payload }
   },
 })
+
+store.state = { test: 'redux-peach' }
 
 setTimeout(() => console.log(store.state), 200)
 

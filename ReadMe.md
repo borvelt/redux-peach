@@ -32,14 +32,20 @@ many times we need to define one action in Component A and handle defined action
 It's good solution that handle this action in reducer of other components but we know that use redux without `redux-actions` is messy and we have first problem that I mentioned above.
 If we use `redux-actions` we can't handle one action with two or more function and we have to make separate actions and this will make application scaffold weak.
 
-`redux-peach` have both of this we can handle actions with two or more functions to run, with same action name and clean scaffold in addition you can use redux middlewares every where you want and very simple.
+`redux-peach` have both of this we can handle actions with two or more functions to run, with same action name and clean scaffold in addition you can use redux middlewares every where you want and it's very simple.
 ## Concepts
 
 ### Enhancers
 This containe middlewares and enhancers for your store, if you want to add some action logger or redux dev tools or etc, you should add as argument to `store.configure` method.`
 
+### State
+We have State type, this will strongly handle states and make states immutable.Ease of use immutable states.
+
+### rootState
+rootState will added when you want to configure your store, simplay you will write javascript object but it will change to State instance.
+
 ### CreateStore
-Return function that accepts some arguments like rooState, middlewares and enhancers and return redux store object
+Return function that accepts some arguments like rootState, middlewares and enhancers and return redux store object
 
 ### Store
 This class where you should make and instance for your application and then configure it with your rootState, middlewares and enhancers.
@@ -55,18 +61,16 @@ This will create an Action for your application we have two type of actions, Act
       Async actions contains four type of action, [onStarted, onSucceed, onEnded, onFailed]
 
 ### ActionHandler
-In ActionHandler options we input the action name same as we defined in ActionCreator and we send some functions like [onStarted, onSucceed, onEnded, onFailed] all of this function will dispatch on time
+In ActionHandler options we write the action name as same as we defined in ActionCreator and we send some functions like [onStarted, onSucceed, onEnded, onFailed] as object and all of this function will dispatch on time.
 
 ### Actions
-ActionCreator and ActionHandler both of this operation is under Actions class.
+ActionCreator and ActionHandler both of this operations is under Actions class.
 Actions class perform all operation about actions.
 
 ### ActionSelector
 ActionSelector use to get the action with actionName.
 
-***
 ## Getting Started
-
 ```bash
 $ npm install --save redux-peach
 ```
@@ -84,28 +88,6 @@ store.configure({
   middlewares: [], 
   enhancers: []
 })
-```
-```javascript
-// Enhancers.js
-const { compose, applyMiddleware } = require('redux')
-const invariant = require('invariant')
-const thunkMiddleware = require('redux-thunk').default
-
-let middlewares = [thunkMiddleware]
-
-let enhancers = []
-
-module.exports = (otherMiddlewares = [], otherEnhancers = []) => {
-  invariant(
-    Array.isArray(otherEnhancers) && Array.isArray(otherEnhancers),
-    'Middlewares and Ehnhancers should be Array',
-  )
-  return compose(
-    applyMiddleware(...middlewares, ...otherMiddlewares),
-    ...enhancers,
-    ...otherEnhancers,
-  )
-}
 ```
 If you need to set state every where you want, you can but be careful that this feature create to set default state in lazy loading for components.
 
@@ -126,19 +108,19 @@ Now define your ActionHandler:
 ```javascript
 store.actions.create(INCREMENT, {
   onSucceed: (action, state) => ({ 
-    Counter: state.get('Counter') + action.payload,
+    Counter: state.Counter + action.payload,
   }),
 })
 
 store.actions.create(INCREMENT, {
   onSucceed: (action, state) => ({ //This is just for example 
-    Counter: state.get('Counter') + action.payload + 30, 
+    Counter: state.Counter + action.payload + 30, 
   }),
 })
 
 store.actions.create(INCREMENT, {
   onSucceed: (action, state) => ({ //This is just for example 
-    Counter: state.get('Counter') + action.payload + 10,
+    Counter: state.Counter + action.payload + 10,
   }),
 })
 
@@ -151,7 +133,7 @@ store.dispatch(store.actions.get(INCREMENT)(4)) //Increment state.Counter by 4
 
 If we want to look on states we see this:
 ```javascript 
-console.log(store.state) // Map { "users": Map { "list": List [ 1, 2 ] }, "Counter": 52 }
+console.log(store.state) // State { _: Map  { "users": Map { "list": List [ "Jim", "Jack", "Paul" ] }, "Counter": 48 } }
 ```
 
 ## Async Actions
@@ -167,7 +149,12 @@ store.actions.create(INCREMENT, {
   },
 })
 ```
-
+```javascript
+store.dispatch(store.actions.get(INCREMENT)(4))
+```
+```javascript
+console.log(store.state) // State { _: Map  { "users": Map { "list": List [ "Jim", "Jack", "Paul" ] }, "Counter": 52 } }
+```
 ## Work with ActionCreator and ActionHandler combination
 If you look at `set state` method in `Store.js` you can see how we use it:
 ```javascript
@@ -176,9 +163,6 @@ If you look at `set state` method in `Store.js` you can see how we use it:
     onDispatchArgs: props, // Args for Dispatch Action 
     onSucceed: action => action.payload, // After dispatch action was succeed, this function will run.
   })
-```
-```javascript
-console.log(store.state) // Map { "users": Map { "list": List [ 1, 2 ] }, "Counter": 58 }
 ```
 ## Test
 Run tests with `npm test`.
