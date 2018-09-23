@@ -1,11 +1,23 @@
 const CreateStore = require('./CreateStore')
 const Actions = require('./Actions')
+const State = require('./State')
 const { DEFAULT_STATE_SET } = require('./Constants')
 
 class Store {
   constructor() {}
-  configure(props = { rootState: {}, middlewares: [], enhancers: [] }) {
+
+  configure(
+    props = {
+      rootState: {},
+      middlewares: [],
+      enhancers: [],
+    },
+  ) {
     this._ = CreateStore(props.rootState, props.middlewares, props.enhancers)
+  }
+
+  reduxStoreObject() {
+    return this._
   }
 
   get actions() {

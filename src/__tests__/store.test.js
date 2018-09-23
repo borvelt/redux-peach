@@ -27,6 +27,21 @@ describe('Create Store Object', () => {
   it('would set new state', () => {
     const newState = { newSetState: true }
     store.state = newState
-    expect(store.state.toJS()).toEqual(newState)
+    expect(store.state.toImmutableObject().toJS()).toEqual(newState)
+  })
+})
+
+describe('Create Store with pre defined rootState', () => {
+  let store
+
+  beforeAll(() => {
+    store = new Store()
+    store.configure({
+      rootState: { friends: ['Bob', 'Ernest', 'Josh', 'Benjamin'] },
+    })
+  })
+
+  it('should have same state', () => {
+    expect(store.state).toBe(store._.getState())
   })
 })

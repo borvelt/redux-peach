@@ -1,10 +1,11 @@
 const { createStore } = require('redux')
 const composedEnhacers = require('./Enhancers')
-const { Map, fromJS } = require('immutable')
+const { Map } = require('immutable')
+const State = require('./State')
 
 module.exports = (rootState = {}, middlewares = [], enhancers = []) => {
   const createdStore = createStore(
-    () => fromJS(rootState),
+    () => State.createInstance(rootState),
     composedEnhacers(middlewares, enhancers),
   )
   createdStore.Handlers = Map({})

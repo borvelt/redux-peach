@@ -1,7 +1,7 @@
 const store = require('./index')
+const State = require('./src/State')
 
 store.configure({ rootState: { Counter: 0 } })
-
 store.actions.create('INCREMENT', {
   async: true,
   onDispatch(value) {
@@ -13,7 +13,13 @@ store.actions.create('INCREMENT', {
 
 store.actions.handle('INCREMENT', {
   onSucceed(action, state) {
-    return { Counter: state.get('Counter') + action.payload }
+    return { Counter: state.Counter + action.payload }
+  },
+})
+
+store.actions.handle('INCREMENT', {
+  onSucceed(action, state) {
+    return { Counter: state.Counter + action.payload + action.payload }
   },
 })
 
@@ -28,8 +34,10 @@ store.actions.new('DECREMENT', {
   selfDispatch: true,
   onDispatchArgs: [66],
   onSucceed(action, state) {
-    return { Counter: state.get('Counter') - action.payload }
+    return { Counter: state.Counter - action.payload }
   },
 })
+
+setTimeout(() => console.log(store.state), 200)
 
 setTimeout(() => console.log(store.state), 1001)
