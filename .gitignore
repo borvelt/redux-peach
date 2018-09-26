@@ -1,2 +1,8 @@
-node_modules/
 *.DS_Store
+/node_modules
+/.eslintcache
+/.idea
+/dist
+/web
+/.vscode
+/.setup

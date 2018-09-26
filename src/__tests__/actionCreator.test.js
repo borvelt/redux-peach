@@ -1,9 +1,10 @@
 const ActionCreator = require('../ActionCreator')
-const store = require('../../index')
+const Store = require('../Store')
 const TEST = 'T E S T'
 const TEST2 = 'T E S T 2'
 const { _STARTED, _FAILED, _SUCCEED, _ENDED } = require('../Constants')
 
+const store = new Store()
 store.configure()
 let actionCreator
 describe('Check ActionCreator with no async', () => {

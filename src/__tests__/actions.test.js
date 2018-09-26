@@ -1,4 +1,4 @@
-const store = require('../../index')
+const Store = require('../Store')
 const Actions = require('../Actions')
 const ActionHandler = require('../ActionHandler')
 const ActionCreator = require('../ActionCreator')
@@ -9,8 +9,9 @@ const TEST2 = 'T E S T 2'
 
 describe('Actions class', () => {
   let actions
-
+  let store
   beforeAll(() => {
+    store = new Store()
     store.configure()
   })
 

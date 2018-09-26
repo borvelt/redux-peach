@@ -1,10 +1,12 @@
-const store = require('../../index')
+const Store = require('../Store')
 const ActionSelector = require('../ActionSelector')
 const Actions = require('../Actions')
 const TEST = 'TEST'
 
+let store
 describe('test action selector', () => {
   beforeAll(() => {
+    store = new Store()
     store.configure()
   })
   it('should pass store object', () => {

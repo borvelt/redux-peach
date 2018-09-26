@@ -1,6 +1,6 @@
 const ActionHandler = require('../ActionHandler')
 const ActionCreator = require('../ActionCreator')
-const store = require('../../index')
+const Store = require('../Store')
 const {
   ONSTARTED,
   ONSUCCEED,
@@ -9,13 +9,14 @@ const {
   _SUCCEED,
 } = require('../Constants')
 const TEST = 'T E S T'
-
+let store
 let actionHandler, actionCreator
 describe('Test actionHandler', () => {
   it('should get store object', () => {
     expect(() => new ActionHandler({})).toThrow()
   })
   beforeAll(() => {
+    store = new Store()
     store.configure()
     actionHandler = new ActionHandler(store)
   })

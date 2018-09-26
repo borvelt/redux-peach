@@ -1,15 +1,35 @@
 {
   "name": "redux-peach",
-  "version": "2.0.0",
-  "description": "Eat Redux Like Peach",
-  "main": "index.js",
+  "version": "2.0.1",
+  "author": {
+    "name": "borvelt",
+    "email": "borvelt@gmail.com"
+  },
+  "license": "MIT",
+  "repository": "https://github.com/borvelt/redux-peach",
+  "description": "Eat redux state manager like 🍑",
+  "private": true,
+  "main": "dist/index.js",
+  "module": "src/index.js",
   "scripts": {
-    "start": "__DEV__=true node index.js",
-    "test": "jest",
-    "lint": "./node_modules/eslint/bin/eslint.js . --cache"
+    "clean": "rm -rf web dist",
+    "lint": "./node_modules/eslint/bin/eslint.js . --cache",
+    "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
+    "dev": "npm run lint && webpack-dev-server --open --config webpack.config/dev.js",
+    "web": "npm run lint && webpack --config webpack.config/web.js",
+    "dist": "npm run lint && webpack --config webpack.config/dist.js",
+    "test": "jest --no-cache"
+  },
+  "pre-commit": {
+    "run": [
+      "precommit-msg",
+      "lint"
+    ]
   },
   "jest": {
-    "testRegex": "src/__tests__/.*\\.test\\.js$"
+    "transform": {
+      "^.+\\.js$": "babel-jest"
+    }
   },
   "keywords": [
     "wrapper",
@@ -24,8 +44,6 @@
     "redux-scaffold",
     "redux-boilerplate"
   ],
-  "author": "“borvelt” <“borvelt@gmail.com”> (http://borvelt.com)",
-  "license": "MIT",
   "dependencies": {
     "immutable": "^3.8.2",
     "invariant": "^2.2.4",
@@ -35,9 +53,28 @@
     "redux-thunk": "^2.3.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.1.0",
+    "@babel/plugin-syntax-dynamic-import": "^7.0.0",
+    "@babel/plugin-transform-runtime": "^7.1.0",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/runtime": "^7.0.0",
+    "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^9.0.0",
+    "babel-jest": "^23.6.0",
+    "babel-loader": "^8.0.2",
+    "clean-webpack-plugin": "^0.1.16",
+    "css-loader": "^1.0.0",
     "eslint": "^5.6.0",
     "eslint-plugin-jest": "^21.22.1",
-    "jest": "^23.6.0"
+    "file-loader": "^2.0.0",
+    "html-webpack-plugin": "^3.2.0",
+    "jest": "^21.1.0",
+    "pre-commit": "^1.2.2",
+    "style-loader": "^0.23.0",
+    "uglifyjs-webpack-plugin": "^2.0.1",
+    "url-loader": "^1.1.1",
+    "webpack": "^4.19.1",
+    "webpack-cli": "^3.1.1",
+    "webpack-dev-server": "^3.1.8"
   }
 }
