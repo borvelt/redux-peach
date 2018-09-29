@@ -1,8 +1,7 @@
 *.DS_Store
+.eslintcache
 /node_modules
-/.eslintcache
 /.idea
-/dist
 /web
 /.vscode
 /.setup

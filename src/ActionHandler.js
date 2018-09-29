@@ -64,7 +64,7 @@ class ActionHandler {
   }
 
   _make(handler) {
-    Object.keys(handler).map(key => {
+    for (let key of Object.keys(handler)) {
       if (this._store.Handlers.has(key)) {
         const func1 = this._store.Handlers.get(key)
         const func2 = handler[key]
@@ -78,7 +78,7 @@ class ActionHandler {
         )
         handler = {}
       }
-    })
+    }
     this._store.Handlers = this._store.Handlers.merge(handler)
     const handlers = this._store.Handlers.toJS()
     this._store.replaceReducer(handleActions(handlers, {}))

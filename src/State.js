@@ -15,11 +15,12 @@ class State {
   }
 
   merge(...args) {
-    args = args.map(
-      element =>
-        element instanceof State ? element.toImmutableObject() : element,
-    )
-    this.__ = this.__.merge(...args)
+    for (let arg of args) {
+      if (arg instanceof State) {
+        arg = arg.toImmutableObject()
+      }
+      this.__ = this.__.mergeDeep(arg)
+    }
     return this
   }
 }

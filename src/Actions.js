@@ -3,6 +3,7 @@ const ActionHandler = require('./ActionHandler')
 const ActionCreator = require('./ActionCreator')
 const ActionSelector = require('./ActionSelector')
 const isReduxStore = require('./IsReduxStore')
+const isObject = require('lodash/isObject')
 
 class Actions {
   constructor(store) {
@@ -34,7 +35,15 @@ class Actions {
   }
 
   handle(name, props) {
-    this._actionHandler.create({ name, ...props })
+    try {
+      invariant(
+        !isObject(name),
+        'if typeof name is Object looking for actionName',
+      )
+      this._actionHandler.create({ name, ...props })
+    } catch (e) {
+      this._actionHandler.create({ ...name })
+    }
   }
 }
 

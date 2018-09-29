@@ -33,6 +33,9 @@ It's good solution that handle this action in reducer of other components but we
 If we use `redux-actions` we can't handle one action with two or more function and we have to make separate actions and this will make application scaffold weak.
 
 `redux-peach` have both of this we can handle actions with two or more functions to run, with same action name and clean scaffold in addition you can use redux middlewares every where you want and it's very simple.
+
+## Use case
+  This library not written to use for specific frameworks like reactjs, vue, angular or etc. This can globaly use for javascript projects.
 ## Concepts
 
 ### Enhancers
@@ -164,6 +167,10 @@ If you look at `set state` method in `Store.js` you can see how we use it:
     onSucceed: action => action.payload, // After dispatch action was succeed, this function will run.
   })
 ```
+
+## Use With reactJS
+To use this library with react you can create store object and pass through your components with Context or create global object or every ways you will prefer.
+
 ## Test
 Run tests with `npm test`.
 Test framework is jest.

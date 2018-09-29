@@ -6,6 +6,9 @@
     "es6": true,
     "jest/globals": true
   },
+  "globals": {
+    "__DEV__": true
+  },
   "plugins": [
     "jest"
   ],

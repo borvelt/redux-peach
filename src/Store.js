@@ -23,16 +23,24 @@ class Store {
     return new Actions(this)
   }
 
-  get state() {
-    return this.toReduxStoreObject().getState()
-  }
-
   set state(newState) {
     this.actions.new(DEFAULT_STATE_SET, {
       selfDispatch: true,
       onDispatchArgs: newState,
       onSucceed: action => action.payload,
     })
+  }
+
+  get state() {
+    return this.toReduxStoreObject().getState()
+  }
+
+  get getState() {
+    return this.toReduxStoreObject().getState
+  }
+
+  get subscribe() {
+    return this.toReduxStoreObject().subscribe
   }
 
   get dispatch() {
