@@ -169,8 +169,40 @@ If you look at `set state` method in `Store.js` you can see how we use it:
 ```
 
 ## Use With reactJS
-To use this library with react you can create store object and pass through your components with Context or create global object or every ways you will prefer.
+To use this library with [react](https://reactjs.org/) you can create store object and pass through your components with [Context](https://reactjs.org/docs/context.html) or create global object or every ways you will prefer.
 
+Create Store.js file in your project root:
+```javascript
+import storeInstance from 'redux-peach'
+
+storeInstance.configure({
+  rootState: { test: 10 },
+  middlewares: [],
+  enhancers: [],
+})
+
+export const store = storeInstance
+export const Actions = storeInstance.actions
+export const setState = state => (storeInstance.state = state)
+export const States = store.state
+```
+Now import every where you want in your react project
+#### react Context
+You can make [context](https://reactjs.org/docs/context.html) in react and provide your store in root of your project and consume it every where.Or until react 16.x you can use [legacy context](https://reactjs.org/docs/legacy-context.html).
+
+If you are using `react-redux` store object will provide with `provider` component.Just consume it
+```javascript
+class A extends Component {
+  static contextTypes = {
+    store: PropTypes.object,
+  }
+
+  constructor(props, context) {
+    super(props, context)
+    this.store = context.store
+  }
+}
+```
 ## Test
 Run tests with `npm test`.
 Test framework is jest.
