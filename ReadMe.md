@@ -35,7 +35,7 @@ If we use `redux-actions` we can't handle one action with two or more function a
 `redux-peach` have both of this we can handle actions with two or more functions to run, with same action name and clean scaffold in addition you can use redux middlewares every where you want and it's very simple.
 
 ## Use case
-  This library not written to use for specific frameworks like reactjs, vue, angular or etc. This can globaly use for javascript projects.
+  This is multi purpose library and not written to use for specific frameworks like reactjs, vue, angular or etc. This can globaly use for javascript projects.
 ## Concepts
 
 ### Enhancers
@@ -176,7 +176,7 @@ Create Store.js file in your project root:
 import storeInstance from 'redux-peach'
 
 storeInstance.configure({
-  rootState: { test: 10 },
+  rootState: {},
   middlewares: [],
   enhancers: [],
 })
@@ -190,7 +190,7 @@ Now import every where you want in your react project
 #### react Context
 You can make [context](https://reactjs.org/docs/context.html) in react and provide your store in root of your project and consume it every where.Or until react 16.x you can use [legacy context](https://reactjs.org/docs/legacy-context.html).
 
-If you are using `react-redux` store object will provide with `provider` component.Just consume it
+If you are using [react-redux](https://github.com/reduxjs/react-redux) store object will provide with `provider` component.Just consume it
 ```javascript
 class A extends Component {
   static contextTypes = {
@@ -202,6 +202,18 @@ class A extends Component {
     this.store = context.store
   }
 }
+```
+One more thing about `react-redux`, when you are using `connect` you should use like this:
+```javascript
+connect(
+  mapStatesToProps, 
+  mapDispatchToProps, 
+  undefined,
+  {
+    pure: true,
+    areStatesEqual: ()=>false
+  }
+)
 ```
 ## Test
 Run tests with `npm test`.
