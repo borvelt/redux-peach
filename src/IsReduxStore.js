@@ -1,17 +1,10 @@
-const isUndefined = require('lodash.isundefined')
+const { isUndefined } = require('./Utils')
 const invariant = require('invariant')
 
 module.exports = store => {
   invariant(!isUndefined(store), 'Store instance should be defined')
   const storeKeys = Object.keys(store)
-  const keys = [
-    'dispatch',
-    'subscribe',
-    'getState',
-    'replaceReducer',
-    'Handlers',
-    'Actions',
-  ]
+  const keys = ['dispatch', 'subscribe', 'getState', 'replaceReducer']
   try {
     keys.map(key => {
       invariant(

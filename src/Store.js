@@ -1,9 +1,19 @@
 const CreateStore = require('./CreateStore')
-const Actions = require('./Actions')
-const { DEFAULT_STATE_SET } = require('./Constants')
+const invariant = require('invariant')
+const Action = require('./Action')
+const State = require('./State')
+const isReduxStore = require('./IsReduxStore')
 
 class Store {
-  constructor() {}
+  constructor(store) {
+    try {
+      invariant(isReduxStore(store), 'invalid input for Store')
+      this.__ = store
+      State.set({}, this.__)
+    } catch (e) {
+      //empty block
+    }
+  }
 
   configure(
     props = {
@@ -19,16 +29,12 @@ class Store {
     return this.__
   }
 
-  get actions() {
-    return new Actions(this)
+  set state(newState) {
+    State.set(newState, this.__)
   }
 
-  set state(newState) {
-    this.actions.new(DEFAULT_STATE_SET, {
-      selfDispatch: true,
-      onDispatchArgs: newState,
-      onSucceed: action => action.payload,
-    })
+  findAction(actionName) {
+    return Action.find(actionName, this.__)
   }
 
   get state() {

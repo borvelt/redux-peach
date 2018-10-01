@@ -1,5 +1,7 @@
 const invariant = require('invariant')
+const Action = require('./Action')
 const { fromJS, Collection } = require('immutable')
+const { DEFAULT_STATE_SET } = require('./Constants')
 
 class State {
   constructor(rawState) {
@@ -8,6 +10,16 @@ class State {
   }
   static createInstance(rawState) {
     return new Proxy(new State(rawState), State.proxyHandler)
+  }
+
+  static set(state, store) {
+    new Action()
+      .setName(DEFAULT_STATE_SET)
+      .onSucceed()
+      .hookToStore(store)
+      .setSelfDispatch(true)
+      .setOnDispatchArgs(state)
+      .make()
   }
 
   toImmutableObject() {
@@ -26,6 +38,14 @@ class State {
 }
 
 State.proxyHandler = {
+  ownKeys(target) {
+    return Reflect.ownKeys(target.__.toJS())
+  },
+  getOwnPropertyDescriptor(target, prop) {
+    if (!['__'].includes(prop)) {
+      return { configurable: true, enumerable: true }
+    }
+  },
   get(target, key) {
     if (key in target) {
       return target[key]
