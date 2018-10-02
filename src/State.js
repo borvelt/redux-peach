@@ -1,13 +1,14 @@
 const invariant = require('invariant')
 const Action = require('./Action')
-const { fromJS, Collection } = require('immutable')
+const { isObject, mergeCustomizer } = require('./Utils')
 const { DEFAULT_STATE_SET } = require('./Constants')
-
+const lodashMerge = require('lodash.mergewith')
 class State {
   constructor(rawState) {
-    invariant(rawState instanceof Object, 'State should be javascript Object')
-    this.__ = fromJS(rawState)
+    invariant(isObject(rawState), 'State should be javascript Object')
+    this.__ = rawState
   }
+
   static createInstance(rawState) {
     return new Proxy(new State(rawState), State.proxyHandler)
   }
@@ -22,24 +23,17 @@ class State {
       .make()
   }
 
-  toImmutableObject() {
-    return this.__
-  }
-
   merge(...args) {
     for (let arg of args) {
-      if (arg instanceof State) {
-        arg = arg.toImmutableObject()
-      }
-      this.__ = this.__.mergeDeep(arg)
+      lodashMerge(this.__, arg, mergeCustomizer)
     }
-    return this
+    return State.createInstance(this.__)
   }
 }
 
 State.proxyHandler = {
   ownKeys(target) {
-    return Reflect.ownKeys(target.__.toJS())
+    return Reflect.ownKeys(target.__)
   },
   getOwnPropertyDescriptor(target, prop) {
     if (!['__'].includes(prop)) {
@@ -50,14 +44,7 @@ State.proxyHandler = {
     if (key in target) {
       return target[key]
     }
-    let value
-    try {
-      value = target.__.get(key)
-      invariant(!(value instanceof Collection), 'it`s not Collection Object')
-      return value.toJS()
-    } catch (ex) {
-      return value
-    }
+    return target.__[key]
   },
 }
 

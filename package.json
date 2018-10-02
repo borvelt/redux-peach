@@ -34,7 +34,6 @@
     "wrapper",
     "helper",
     "state-manager",
-    "immutable",
     "redux",
     "redux-actions",
     "redux-thunk",
@@ -44,8 +43,8 @@
     "redux-boilerplate"
   ],
   "dependencies": {
-    "immutable": "^3.8.2",
     "invariant": "^2.2.4",
+    "lodash.mergewith": "^4.6.1",
     "redux": "^4.0.0",
     "redux-actions": "^2.6.1",
     "redux-thunk": "^2.3.0"

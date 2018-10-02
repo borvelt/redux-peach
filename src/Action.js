@@ -1,9 +1,7 @@
 const { createAction, handleActions } = require('redux-actions')
 const invariant = require('invariant')
-const { Map } = require('immutable')
 const isReduxStore = require('./IsReduxStore')
 const { isUndefined, isBoolean, isFunction } = require('./Utils')
-const State = require('./State')
 const {
   _STARTED,
   _FAILED,
@@ -105,13 +103,13 @@ class Action {
       return Action.find(this._name, this._store)
     } catch (e) {
       if (!('__actions' in this._store)) {
-        this._store.__actions = Map({})
+        this._store.__actions = {}
       }
       invariant(
         !isUndefined(this._name),
         'first of all you should make action name',
       )
-      this._store.__actions = this._store.__actions.merge({
+      Object.assign(this._store.__actions, {
         [this._name]: this,
       })
       return this
@@ -132,7 +130,6 @@ class Action {
 
   _makeHandlers() {
     const handlers = {}
-    console.log(this._name, this._handlers)
     for (let type of Object.keys(this._handlers)) {
       if (this._handlers[type].length > 1) {
         handlers[this._types[type]] = (state, action) => {
@@ -146,22 +143,25 @@ class Action {
         handlers[this._types[type]] = (state, action) => {
           try {
             result = this._handlers[type][0](action, state)
-            return state.merge(result)
+            state = state.merge(result)
+            return state
           } catch (e) {
-            return State.createInstance(result)
+            throw new Error('State object should have merge method.')
           }
         }
       }
     }
     return handlers
   }
+
   _updateReducers() {
-    const handlers = {}
-    this._store.__actions
-      .entrySeq()
-      .forEach(e => Object.assign(handlers, e[1]._makeHandlers()))
+    let handlers = {}
+    for (let action of Object.values(this._store.__actions)) {
+      Object.assign(handlers, action._makeHandlers())
+    }
     this._store.replaceReducer(handleActions(handlers, {}))
   }
+
   make() {
     invariant(
       !isUndefined(this._store) && !isUndefined(this._store.__actions),
@@ -282,7 +282,7 @@ class Action {
   }
 
   static find(actionName, store) {
-    const result = this._getStore(store).__actions.get(actionName)
+    const result = this._getStore(store).__actions[actionName]
     invariant(!isUndefined(result), 'Action NOT found.')
     return result
   }
