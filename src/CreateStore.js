@@ -4,7 +4,7 @@ const State = require('./State')
 
 module.exports = (rootState = {}, middlewares = [], enhancers = []) => {
   const createdStore = createStore(
-    () => State.createInstance(rootState),
+    () => new State(rootState),
     composedEnhacers(middlewares, enhancers),
   )
   return createdStore

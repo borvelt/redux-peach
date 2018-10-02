@@ -3,14 +3,11 @@ const Action = require('./Action')
 const { isObject, mergeCustomizer } = require('./Utils')
 const { DEFAULT_STATE_SET } = require('./Constants')
 const lodashMerge = require('lodash.mergewith')
-class State {
+
+class StateClass {
   constructor(rawState) {
     invariant(isObject(rawState), 'State should be javascript Object')
     this.__ = rawState
-  }
-
-  static createInstance(rawState) {
-    return new Proxy(new State(rawState), State.proxyHandler)
   }
 
   static set(state, store) {
@@ -28,11 +25,11 @@ class State {
     for (let arg of args) {
       lodashMerge(new__, this.__, arg, mergeCustomizer)
     }
-    return State.createInstance(new__)
+    return new State(new__)
   }
 }
 
-State.proxyHandler = {
+StateClass.proxyHandler = {
   ownKeys(target) {
     return Reflect.ownKeys(target.__)
   },
@@ -48,5 +45,14 @@ State.proxyHandler = {
     return target.__[key]
   },
 }
+
+const State = new Proxy(StateClass, {
+  construct(target, rawState) {
+    return new Proxy(new target(...rawState), State.proxyHandler)
+  },
+  apply(target, thisArg, rawState) {
+    return new Proxy(new target(...rawState), State.proxyHandler)
+  },
+})
 
 module.exports = State
