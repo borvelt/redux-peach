@@ -24,10 +24,11 @@ class State {
   }
 
   merge(...args) {
+    let new__ = {}
     for (let arg of args) {
-      lodashMerge(this.__, arg, mergeCustomizer)
+      lodashMerge(new__, this.__, arg, mergeCustomizer)
     }
-    return State.createInstance(this.__)
+    return State.createInstance(new__)
   }
 }
 
