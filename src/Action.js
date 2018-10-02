@@ -131,24 +131,12 @@ class Action {
   _makeHandlers() {
     const handlers = {}
     for (let type of Object.keys(this._handlers)) {
-      if (this._handlers[type].length > 1) {
-        handlers[this._types[type]] = (state, action) => {
-          for (let handler of this._handlers[type]) {
-            state = state.merge(handler(action, state))
-          }
-          return state
+      handlers[this._types[type]] = (state, action) => {
+        invariant('merge' in state, 'State object should have merge method.')
+        for (let handler of this._handlers[type]) {
+          state = state.merge(handler(action, state))
         }
-      } else if (this._handlers[type].length === 1) {
-        let result = {}
-        handlers[this._types[type]] = (state, action) => {
-          try {
-            result = this._handlers[type][0](action, state)
-            state = state.merge(result)
-            return state
-          } catch (e) {
-            throw new Error('State object should have merge method.')
-          }
-        }
+        return state
       }
     }
     return handlers

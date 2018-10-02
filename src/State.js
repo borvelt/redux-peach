@@ -47,12 +47,8 @@ StateClass.proxyHandler = {
 }
 
 const State = new Proxy(StateClass, {
-  construct(target, rawState) {
-    return new Proxy(new target(...rawState), State.proxyHandler)
-  },
-  apply(target, thisArg, rawState) {
-    return new Proxy(new target(...rawState), State.proxyHandler)
-  },
+  construct: (target, rawState) =>
+    new Proxy(new target(...rawState), State.proxyHandler),
 })
 
 module.exports = State
