@@ -40,12 +40,15 @@
     "redux-middleware",
     "redux-peach",
     "redux-scaffold",
-    "redux-boilerplate"
+    "redux-boilerplate",
+    "action-handler"
   ],
+  "peerDependencies": {
+    "redux": "^4.0.0"
+  },
   "dependencies": {
     "invariant": "^2.2.4",
     "lodash.mergewith": "^4.6.1",
-    "redux": "^4.0.0",
     "redux-actions": "^2.6.1",
     "redux-thunk": "^2.3.0"
   },

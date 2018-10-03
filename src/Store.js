@@ -15,14 +15,13 @@ class Store {
     }
   }
 
-  configure(
-    props = {
-      rootState: {},
-      middlewares: [],
-      enhancers: [],
-    },
-  ) {
-    this.__ = CreateStore(props.rootState, props.middlewares, props.enhancers)
+  configure(props = {}) {
+    this.__ = CreateStore(
+      props.rootState,
+      props.middlewares,
+      props.enhancers,
+      props.composeEnhancer,
+    )
   }
 
   toReduxStoreObject() {

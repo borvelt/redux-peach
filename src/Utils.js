@@ -1,5 +1,5 @@
 const isUndefined = input => typeof input === typeof undefined
-const isFunction = input => typeof input === typeof (() => {})
+const isFunction = input => typeof input === typeof (x => x)
 const isObject = input => typeof input === typeof null
 const isBoolean = input => typeof input === typeof true
 const mergeCustomizer = (objValue, srcValue) => {
