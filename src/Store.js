@@ -1,6 +1,6 @@
 const CreateStore = require('./CreateStore')
 const invariant = require('invariant')
-const Action = require('./Action')
+// const Action = require('./Action')
 const State = require('./State')
 const isReduxStore = require('./IsReduxStore')
 
@@ -9,7 +9,7 @@ class Store {
     try {
       invariant(isReduxStore(store), 'invalid input for Store')
       this.__ = store
-      State.set({}, this.__)
+      State.set({}, this.reduxStoreObject)
     } catch (e) {
       //empty block
     }
@@ -24,32 +24,36 @@ class Store {
     )
   }
 
-  toReduxStoreObject() {
+  get reduxStoreObject() {
     return this.__
   }
 
-  set state(newState) {
-    State.set(newState, this.__)
-  }
+  // get actions() {
+  //   return this.reduxStoreObject.__actions
+  // }
 
-  findAction(actionName) {
-    return Action.find(actionName, this.__)
-  }
+  // set state(newState) {
+  //   State.set(newState, this.reduxStoreObject)
+  // }
+
+  // findAction(actionName) {
+  //   return Action.find(actionName, this.reduxStoreObject)
+  // }
 
   get state() {
-    return this.toReduxStoreObject().getState()
+    return this.reduxStoreObject.getState()
   }
 
   get getState() {
-    return this.toReduxStoreObject().getState
+    return this.reduxStoreObject.getState
   }
 
   get subscribe() {
-    return this.toReduxStoreObject().subscribe
+    return this.reduxStoreObject.subscribe
   }
 
   get dispatch() {
-    return this.toReduxStoreObject().dispatch
+    return this.reduxStoreObject.dispatch
   }
 }
 

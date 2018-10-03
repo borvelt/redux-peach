@@ -1,47 +1,25 @@
 const Store = require('../Store')
-const Actions = require('../Actions')
+const State = require('../State')
 
 describe('Create Store Object', () => {
   let store
-
+  let rootState = { isMailRecieved: true }
   beforeAll(() => {
     store = new Store()
+  })
+
+  it('reduxStoreObject should be undefined', () => {
+    expect(store.reduxStoreObject).toBeUndefined()
   })
 
   it('should have configure method', () => {
-    expect(typeof store.configure).toBe(typeof (() => {}))
-  })
-
-  beforeAll(() => {
-    store.configure()
-  })
-
-  it('should be Actions type (actions)', () => {
-    expect(store.actions instanceof Actions).toBe(true)
+    expect(typeof store.configure).toBe(typeof (x => x))
   })
 
   it('should show state currectly', () => {
-    expect(store.state).toBe(store.toReduxStoreObject().getState())
-  })
-
-  it('would set new state', () => {
-    const newState = { newSetState: true }
-    store.state = newState
-    expect(store.state.toImmutableObject().toJS()).toEqual(newState)
-  })
-})
-
-describe('Create Store with pre defined rootState', () => {
-  let store
-
-  beforeAll(() => {
-    store = new Store()
-    store.configure({
-      rootState: { friends: ['Bob', 'Ernest', 'Josh', 'Benjamin'] },
-    })
-  })
-
-  it('should have same state', () => {
-    expect(store.state).toBe(store.toReduxStoreObject().getState())
+    store.configure(rootState)
+    expect(store.getState()).toBe(store.reduxStoreObject.getState())
+    console.log(store.getState())
+    expect(store.getState()).toEqual(new State(rootState))
   })
 })

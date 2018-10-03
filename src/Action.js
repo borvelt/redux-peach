@@ -120,7 +120,7 @@ class Action {
     let reduxStore
     try {
       invariant('__' in store, 'it`s not a Store instance')
-      reduxStore = store.toReduxStoreObject()
+      reduxStore = store.reduxStoreObject
     } catch (e) {
       reduxStore = store
     }

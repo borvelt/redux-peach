@@ -1,5 +1,5 @@
 # Redux Peach
-### Eat redux state manager like 🍑
+### Eat redux state container like 🍑
 
 [ImmutableJS](https://github.com/facebook/immutable-js), 
 [redux](https://github.com/reduxjs/redux),

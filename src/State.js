@@ -10,8 +10,12 @@ class StateClass {
     this.__ = rawState
   }
 
+  get rawState() {
+    return this.__
+  }
+
   static set(state, store) {
-    new Action()
+    Action()
       .setName(DEFAULT_STATE_SET)
       .onSucceed()
       .hookToStore(store)
@@ -23,7 +27,7 @@ class StateClass {
   merge(...args) {
     let new__ = {}
     for (let arg of args) {
-      lodashMerge(new__, this.__, arg, mergeCustomizer)
+      lodashMerge(new__, this.rawState, arg, mergeCustomizer)
     }
     return new State(new__)
   }
@@ -31,18 +35,22 @@ class StateClass {
 
 StateClass.proxyHandler = {
   ownKeys(target) {
-    return Reflect.ownKeys(target.__)
+    return Reflect.ownKeys(target.rawState)
   },
   getOwnPropertyDescriptor(target, prop) {
     if (!['__'].includes(prop)) {
-      return { configurable: true, enumerable: true }
+      return {
+        configurable: true,
+        enumerable: true,
+        value: target.rawState[prop],
+      }
     }
   },
   get(target, key) {
     if (key in target) {
       return target[key]
     }
-    return target.__[key]
+    return target.rawState[key]
   },
 }
 
