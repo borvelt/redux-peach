@@ -1,6 +1,7 @@
 const Store = require('../Store')
 const State = require('../State')
-
+const Action = require('../Action')
+const { DEFAULT_STATE_SET } = require('../Constants')
 describe('Create Store Object', () => {
   let store
   let rootState = { isMailRecieved: true }
@@ -17,9 +18,27 @@ describe('Create Store Object', () => {
   })
 
   it('should show state currectly', () => {
-    store.configure(rootState)
-    expect(store.getState()).toBe(store.reduxStoreObject.getState())
-    console.log(store.getState())
+    store.configure({ rootState })
+    expect(store.state).toBe(store.reduxStoreObject.getState())
     expect(store.getState()).toEqual(new State(rootState))
+  })
+
+  describe('Store with State', () => {
+    it('should show store with state', () => {
+      store.configure({ rootState })
+      store.state = { test: 20 }
+      expect(store.state).toEqual({ ...rootState, test: 20 })
+    })
+    it('should show store actions', () => {
+      expect(store.actions[DEFAULT_STATE_SET]).toBeInstanceOf(Action)
+    })
+  })
+
+  describe('Store find Action', () => {
+    it('should return true action source', () => {
+      expect(store.actions[DEFAULT_STATE_SET]).toBe(
+        store.findAction(DEFAULT_STATE_SET),
+      )
+    })
   })
 })

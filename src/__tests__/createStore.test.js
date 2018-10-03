@@ -10,7 +10,6 @@ describe('test createStore', () => {
   })
 
   it('should check root state to be equal', () => {
-    console.log(store.getState())
     expect(store.getState()).toEqual({ test: 10 })
   })
 

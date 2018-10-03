@@ -221,7 +221,7 @@ Test framework is jest.
 
 Current tests is not unit test exactly and just check base functionality.
 
-*34 Tests* will be passed.
+*35 Tests* will be passed.
 
 Need More TESTS!!!!
 

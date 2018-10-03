@@ -1,6 +1,6 @@
 const CreateStore = require('./CreateStore')
 const invariant = require('invariant')
-// const Action = require('./Action')
+const Action = require('./Action')
 const State = require('./State')
 const isReduxStore = require('./IsReduxStore')
 
@@ -28,17 +28,17 @@ class Store {
     return this.__
   }
 
-  // get actions() {
-  //   return this.reduxStoreObject.__actions
-  // }
+  get actions() {
+    return this.reduxStoreObject.__actions
+  }
 
-  // set state(newState) {
-  //   State.set(newState, this.reduxStoreObject)
-  // }
+  set state(newState) {
+    State.set(newState, this.reduxStoreObject)
+  }
 
-  // findAction(actionName) {
-  //   return Action.find(actionName, this.reduxStoreObject)
-  // }
+  findAction(actionName) {
+    return Action.find(actionName, this.reduxStoreObject)
+  }
 
   get state() {
     return this.reduxStoreObject.getState()
