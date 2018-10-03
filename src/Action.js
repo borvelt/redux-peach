@@ -276,4 +276,8 @@ class Action {
   }
 }
 
-module.exports = Action
+const ActionProxy = new Proxy(Action, {
+  apply: target => new target(),
+})
+
+module.exports = ActionProxy
