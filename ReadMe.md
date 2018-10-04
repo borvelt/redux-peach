@@ -45,7 +45,7 @@ This containe middlewares and enhancers for your store, if you want to add some 
 We have State type, this will strongly handle states and make states immutable.Ease of use immutable states.
 
 ### rootState
-rootState will added when you want to configure your store, simplay you will write javascript object but it will change to State instance.
+rootState will added when you want to configure your store, simply you will write javascript object but it will change to State instance.
 
 ### CreateStore
 Return function that accepts some arguments like rootState, middlewares and enhancers and return redux store object
@@ -53,25 +53,26 @@ Return function that accepts some arguments like rootState, middlewares and enha
 ### Store
 This class where you should make and instance for your application and then configure it with your rootState, middlewares and enhancers.
 
-### ActionCreator
-This will create an Action for your application we have two type of actions, ActionCreator return action function and types of actions.
+### Action
+You should create action for your application an then dispatch, ofcurse you need to add listener for your action, every thing about actions is in Action class.
+
+We have two type of actions and some sub actions:
   * Regular actions
   
-    Regular actions contains two type of action, [onSucceed, onFailed]
+    Regular actions contains two sub actions, [actionName_SUCCEED, actioName_FAILED]
 
   * Async actions
 
-      Async actions contains four type of action, [onStarted, onSucceed, onEnded, onFailed]
+      Async actions contains four sub actions, [actioName_STARTED, actioName_onSucceed, actioName_onEnded, actioName_onFailed]
 
-### ActionHandler
-In ActionHandler options we write the action name as same as we defined in ActionCreator and we send some functions like [onStarted, onSucceed, onEnded, onFailed] as object and all of this function will dispatch on time.
+#### Handle Actions
+According to your action type (async flag) some sub actions will dispatch that you can handle by some function like this:
+  sub action[actionName_SUCCEED] -> dispatch -> will handle with onSucceed function
 
-### Actions
-ActionCreator and ActionHandler both of this operations is under Actions class.
-Actions class perform all operation about actions.
+  sub action[actionName_FAILED] -> dispatch -> will handle with onFailed function
 
-### ActionSelector
-ActionSelector use to get the action with actionName.
+#### Handle Pre defined actions
+Some libraries has their own actions, you can handle them by create new action with same name and catch them with `.onHappened(x => x)` method.
 
 ## Getting Started
 ```bash
