@@ -98,6 +98,10 @@ class Action {
   }
 
   hookToStore(store) {
+    invariant(
+      !isUndefined(this._name),
+      'first of all you should make action name',
+    )
     try {
       this._store = Action._getStore(store)
       return Action.find(this._name, this._store)
@@ -105,10 +109,6 @@ class Action {
       if (!('__actions' in this._store)) {
         this._store.__actions = {}
       }
-      invariant(
-        !isUndefined(this._name),
-        'first of all you should make action name',
-      )
       Object.assign(this._store.__actions, {
         [this._name]: this,
       })
@@ -126,28 +126,6 @@ class Action {
     }
     invariant(isReduxStore(reduxStore), 'it should be redux store')
     return reduxStore
-  }
-
-  _makeHandlers() {
-    const handlers = {}
-    for (let type of Object.keys(this._handlers)) {
-      handlers[this._types[type]] = (state, action) => {
-        invariant('merge' in state, 'State object should have merge method.')
-        for (let handler of this._handlers[type]) {
-          state = state.merge(handler(action, state))
-        }
-        return state
-      }
-    }
-    return handlers
-  }
-
-  _updateReducers() {
-    let handlers = {}
-    for (let action of Object.values(this._store.__actions)) {
-      Object.assign(handlers, action._makeHandlers())
-    }
-    this._store.replaceReducer(handleActions(handlers, {}))
   }
 
   make() {
@@ -175,6 +153,28 @@ class Action {
     const handlers = this._handlers
     this._handlers = {}
     return handlers
+  }
+
+  _makeHandlers() {
+    const handlers = {}
+    for (let type of Object.keys(this._handlers)) {
+      handlers[this._types[type]] = (state, action) => {
+        invariant('merge' in state, 'State object should have merge method.')
+        for (let handler of this._handlers[type]) {
+          state = state.merge(handler(action, state))
+        }
+        return state
+      }
+    }
+    return handlers
+  }
+
+  _updateReducers() {
+    let handlers = {}
+    for (let action of Object.values(this._store.__actions)) {
+      Object.assign(handlers, action._makeHandlers())
+    }
+    this._store.replaceReducer(handleActions(handlers, {}))
   }
 
   _makeTypes() {
