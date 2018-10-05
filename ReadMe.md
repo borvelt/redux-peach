@@ -74,118 +74,116 @@ According to your action type (async flag) some sub actions will dispatch that y
 #### Handle Pre defined actions
 Some libraries has their own actions, you can handle them by create new action with same name and catch them with `.onHappened(x => x)` method.
 
+#### [payloadCreator and metaCreator definition](https://redux-actions.js.org/api/createaction#createactiontype-payloadcreator-metacreator)
+
+
 ## Getting Started
 ```bash
 $ npm install --save redux-peach
 ```
 Add in Your project if you are using reactjs you can use it with `react-redux` and use `provider`.
 ```javascript
-const store = require('redux-peach') // store is Store Instance.
-const INCREMENT = 'INCREMENT ACTION NAME' // define constant
-const DEFAULT_STATE_SET = 'DEFAULT STATE SET' // define constant
+const {Store, State, Action} = require('redux-peach')
 ```
 Now you should configure your store like this:
 ```javascript 
 // set middlewares and enhancers here
 store.configure({
-  rootState: {}, 
-  middlewares: [], 
-  enhancers: []
+  rootState: { users: { list: ['Jim', 'Jack', 'Paul'] }, Counter: 0 },
 })
+```
+Create Async action with name INCREMENT:
+```javascript
+Action()
+  .setName('INCREMENT')
+  .hookToStore(store)
+  .setAsync(true)
+  .setOnDispatchListener(
+    value =>
+      new Promise(resolve => setTimeout(() => resolve(value * value), 1000)),
+  )
+  .make()
+  // You can add payloadCreator and metaCreator as described in redux-actions library.
+})
+```
+After 1000 milisecond will return square of value that you will dispatch. Always you should call `make`, `hookToStore` to make and hook current action to store.
+
+It's important to call `make` method after all operations of action.And It's also better to call `hookToStore` after `setName` because in `hookToStore` if action defined before, this will return that and if you call it as last method and action name defined, all of your configuration will discard.
+
+Now let's handle INCREMENT action:
+```javascript
+Action()
+  .setName('INCREMENT')
+  .hookToStore(store)
+  .onSucceed((action, state) => ({
+    Counter: state.Counter + action.payload,
+  }))
+  .make()
+})
+```
+And another hanlder for INCREMENT action:
+```javascript
+Action()
+  .setName('INCREMENT')
+  .hookToStore(store)
+  .onSucceed((action, state) => ({
+    Counter: state.Counter + action.payload + action.payload,
+  }))
+  .make()
+```
+Lets get `INCREMENT` action
+```javascript
+const increment = Action.find('INCREMENT', store)
+```
+And then dispatch it
+```javascript
+store.dispatch(increment.prepareForDispatch(4)) //Increment state.Counter by 4
+```
+Create `DECREMENT` action that will dispatch immediately after created.
+```javascript
+Action()
+  .setName('DECREMENT')
+  .hookToStore(store)
+  .setOnDispatchListener(value => value * 2)
+  .setSelfDispatch(true)
+  .setOnDispatchArgs([66])
+  .onSucceed((action, state) => ({ Counter: state.Counter - action.payload }))
+  .make()
 ```
 If you need to set state every where you want, you can but be careful that this feature create to set default state in lazy loading for components.
 
 ```javascript
-store.state = { users: { list: ['Jim', 'Jack', 'Paul'] }, Counter: 0 }
-```
-Now make your first Action:
-
-[payloadCreator and metaCreator definition](https://redux-actions.js.org/api/createaction#createactiontype-payloadcreator-metacreator)
-```javascript
-store.actions.create(INCREMENT, {
-  payloadCreator: undefined,
-  metaCreator: undefined,
-  // You can add payloadCreator and metaCreator as described in redux-actions library.
-})
-```
-Now define your ActionHandler:
-```javascript
-store.actions.create(INCREMENT, {
-  onSucceed: (action, state) => ({ 
-    Counter: state.Counter + action.payload,
-  }),
-})
-
-store.actions.create(INCREMENT, {
-  onSucceed: (action, state) => ({ //This is just for example 
-    Counter: state.Counter + action.payload + 30, 
-  }),
-})
-
-store.actions.create(INCREMENT, {
-  onSucceed: (action, state) => ({ //This is just for example 
-    Counter: state.Counter + action.payload + 10,
-  }),
-})
-
-```
-Lets dispatch `INCREMENT` action
-```javascript
-//ActionSelector will return created action Function for execute.
-store.dispatch(store.actions.get(INCREMENT)(4)) //Increment state.Counter by 4
+State.set({ test: 'redux-peach' }, store)
+// OR
+store.state = { test: 'redux-peach' }
 ```
 
 If we want to look on states we see this:
 ```javascript 
-console.log(store.state) // State { _: Map  { "users": Map { "list": List [ "Jim", "Jack", "Paul" ] }, "Counter": 48 } }
+setTimeout(() => console.log(store.state), 200)
+//After 200miliseconds: { users: { list: [ 'Jim', 'Jack', 'Paul' ] }, Counter: -132, test: 'redux-peach' }
+setTimeout(() => console.log(store.state), 1001)
+//After 801miliseconds: { users: { list: [ 'Jim', 'Jack', 'Paul' ] }, Counter: -84, test: 'redux-peach' }
 ```
-
-## Async Actions
-Define AsyncAction
-
-With set `async: true` action will be async. On Async actions we can set `onDispatch` function. This function is a redux middleware.
+## Set your own store
+If you have store with very special configurations like persistence or any thing other, you can make your store then import to `redux-peach`.Just pass your store to constructor.
 ```javascript
-store.actions.create(INCREMENT, {
-  async: true, // Make action async
-  onDispatch: (value, dispatch, getState) => { // This is middleware args from dispatch action and dispatch and getState will come in as a function arguments.
-    // In this example (4 + 2) will pass to INCREMENT ActionHandler after 1 Second.
-    return new Promise(resolve => setTimeout(() => resolve(value + 2), 1000))
-  },
-})
+const store = new Store(reduxStore)
 ```
-```javascript
-store.dispatch(store.actions.get(INCREMENT)(4))
-```
-```javascript
-console.log(store.state) // State { _: Map  { "users": Map { "list": List [ "Jim", "Jack", "Paul" ] }, "Counter": 52 } }
-```
-## Work with ActionCreator and ActionHandler combination
-If you look at `set state` method in `Store.js` you can see how we use it:
-```javascript
-  this.actions.new(DEFAULT_STATE_SET, {
-    selfDispatch: true, // This will Dispatch action immediately after defining.
-    onDispatchArgs: props, // Args for Dispatch Action 
-    onSucceed: action => action.payload, // After dispatch action was succeed, this function will run.
-  })
-```
-
 ## Use With reactJS
 To use this library with [react](https://reactjs.org/) you can create store object and pass through your components with [Context](https://reactjs.org/docs/context.html) or create global object or every ways you will prefer.
 
 Create Store.js file in your project root:
 ```javascript
-import storeInstance from 'redux-peach'
-
-storeInstance.configure({
-  rootState: {},
-  middlewares: [],
-  enhancers: [],
-})
-
-export const store = storeInstance
-export const Actions = storeInstance.actions
-export const setState = state => (storeInstance.state = state)
-export const States = store.state
+import { Store, State, Action } from 'redux-peach'
+//Create reduxStore...
+export const store = new Store(reduxStore)
+export const setState = newState => State.set(newState, store)
+export const findAction = actionName => Action.find(actionName, store)
+export const newAction = actionName =>
+  Action()
+    .setName(actionName)
+    .hookToStore(store)
 ```
 Now import every where you want in your react project
 #### react Context
@@ -204,18 +202,8 @@ class A extends Component {
   }
 }
 ```
-One more thing about `react-redux`, when you are using `connect` you should use like this:
-```javascript
-connect(
-  mapStatesToProps, 
-  mapDispatchToProps, 
-  undefined,
-  {
-    pure: true,
-    areStatesEqual: ()=>false
-  }
-)
-```
+#### State type and preformance issue
+`State` type in `redux-peach` handle shallow equals in `redux-react` library. and it doesn't have a performance issue.
 ## Test
 Run tests with `npm test`.
 Test framework is jest.
