@@ -1,47 +1,44 @@
 const Store = require('../Store')
-const Actions = require('../Actions')
-
+const State = require('../State')
+const Action = require('../Action')
+const { DEFAULT_STATE_SET } = require('../Constants')
 describe('Create Store Object', () => {
   let store
-
+  let rootState = { isMailRecieved: true }
   beforeAll(() => {
     store = new Store()
+  })
+
+  it('reduxStoreObject should be undefined', () => {
+    expect(store.reduxStoreObject).toBeUndefined()
   })
 
   it('should have configure method', () => {
-    expect(typeof store.configure).toBe(typeof (() => {}))
-  })
-
-  beforeAll(() => {
-    store.configure()
-  })
-
-  it('should be Actions type (actions)', () => {
-    expect(store.actions instanceof Actions).toBe(true)
+    expect(typeof store.configure).toBe(typeof (x => x))
   })
 
   it('should show state currectly', () => {
-    expect(store.state).toBe(store.toReduxStoreObject().getState())
+    store.configure({ rootState })
+    expect(store.state).toBe(store.reduxStoreObject.getState())
+    expect(store.getState()).toEqual(new State(rootState))
   })
 
-  it('would set new state', () => {
-    const newState = { newSetState: true }
-    store.state = newState
-    expect(store.state.toImmutableObject().toJS()).toEqual(newState)
-  })
-})
-
-describe('Create Store with pre defined rootState', () => {
-  let store
-
-  beforeAll(() => {
-    store = new Store()
-    store.configure({
-      rootState: { friends: ['Bob', 'Ernest', 'Josh', 'Benjamin'] },
+  describe('Store with State', () => {
+    it('should show store with state', () => {
+      store.configure({ rootState })
+      store.state = { test: 20 }
+      expect(store.state).toEqual({ ...rootState, test: 20 })
+    })
+    it('should show store actions', () => {
+      expect(store.actions[DEFAULT_STATE_SET]).toBeInstanceOf(Action)
     })
   })
 
-  it('should have same state', () => {
-    expect(store.state).toBe(store.toReduxStoreObject().getState())
+  describe('Store find Action', () => {
+    it('should return true action source', () => {
+      expect(store.actions[DEFAULT_STATE_SET]).toBe(
+        store.findAction(DEFAULT_STATE_SET),
+      )
+    })
   })
 })

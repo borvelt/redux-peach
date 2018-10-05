@@ -1,44 +1,62 @@
 const invariant = require('invariant')
-const { fromJS, Collection } = require('immutable')
+const Action = require('./Action')
+const { isObject, mergeCustomizer } = require('./Utils')
+const { DEFAULT_STATE_SET } = require('./Constants')
+const lodashMerge = require('lodash.mergewith')
 
-class State {
+class StateClass {
   constructor(rawState) {
-    invariant(rawState instanceof Object, 'State should be javascript Object')
-    this.__ = fromJS(rawState)
-  }
-  static createInstance(rawState) {
-    return new Proxy(new State(rawState), State.proxyHandler)
+    invariant(isObject(rawState), 'State should be javascript Object')
+    this.__ = rawState
   }
 
-  toImmutableObject() {
+  get rawState() {
     return this.__
   }
 
+  static set(state, store) {
+    Action()
+      .setName(DEFAULT_STATE_SET)
+      .onSucceed()
+      .hookToStore(store)
+      .setSelfDispatch(true)
+      .setOnDispatchArgs(state)
+      .make()
+  }
+
   merge(...args) {
+    let new__ = {}
     for (let arg of args) {
-      if (arg instanceof State) {
-        arg = arg.toImmutableObject()
-      }
-      this.__ = this.__.mergeDeep(arg)
+      lodashMerge(new__, this.rawState, arg, mergeCustomizer)
     }
-    return this
+    return new State(new__)
   }
 }
 
-State.proxyHandler = {
+StateClass.proxyHandler = {
+  ownKeys(target) {
+    return Reflect.ownKeys(target.rawState)
+  },
+  getOwnPropertyDescriptor(target, prop) {
+    if (!['__'].includes(prop)) {
+      return {
+        configurable: true,
+        enumerable: true,
+        value: target.rawState[prop],
+      }
+    }
+  },
   get(target, key) {
     if (key in target) {
       return target[key]
     }
-    let value
-    try {
-      value = target.__.get(key)
-      invariant(!(value instanceof Collection), 'it`s not Collection Object')
-      return value.toJS()
-    } catch (ex) {
-      return value
-    }
+    return target.rawState[key]
   },
 }
+
+const State = new Proxy(StateClass, {
+  construct: (target, rawState) =>
+    new Proxy(new target(...rawState), State.proxyHandler),
+})
 
 module.exports = State

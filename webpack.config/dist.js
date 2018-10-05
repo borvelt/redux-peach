@@ -13,7 +13,7 @@ module.exports = {
     library: 'reduxPeach',
     libraryTarget: 'umd',
   },
-  externals: [],
+  externals: [{ redux: 'redux' }],
   module: {
     rules: [
       {

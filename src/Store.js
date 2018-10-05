@@ -1,50 +1,59 @@
 const CreateStore = require('./CreateStore')
-const Actions = require('./Actions')
-const { DEFAULT_STATE_SET } = require('./Constants')
+const invariant = require('invariant')
+const Action = require('./Action')
+const State = require('./State')
+const isReduxStore = require('./IsReduxStore')
 
 class Store {
-  constructor() {}
-
-  configure(
-    props = {
-      rootState: {},
-      middlewares: [],
-      enhancers: [],
-    },
-  ) {
-    this.__ = CreateStore(props.rootState, props.middlewares, props.enhancers)
+  constructor(store) {
+    try {
+      invariant(isReduxStore(store), 'invalid input for Store')
+      this.__ = store
+      State.set({}, this.reduxStoreObject)
+    } catch (e) {
+      //empty block
+    }
   }
 
-  toReduxStoreObject() {
+  configure(props = {}) {
+    this.__ = CreateStore(
+      props.rootState,
+      props.middlewares,
+      props.enhancers,
+      props.composeEnhancer,
+    )
+  }
+
+  get reduxStoreObject() {
     return this.__
   }
 
   get actions() {
-    return new Actions(this)
+    return this.reduxStoreObject.__actions
   }
 
   set state(newState) {
-    this.actions.new(DEFAULT_STATE_SET, {
-      selfDispatch: true,
-      onDispatchArgs: newState,
-      onSucceed: action => action.payload,
-    })
+    State.set(newState, this.reduxStoreObject)
+  }
+
+  findAction(actionName) {
+    return Action.find(actionName, this.reduxStoreObject)
   }
 
   get state() {
-    return this.toReduxStoreObject().getState()
+    return this.reduxStoreObject.getState()
   }
 
   get getState() {
-    return this.toReduxStoreObject().getState
+    return this.reduxStoreObject.getState
   }
 
   get subscribe() {
-    return this.toReduxStoreObject().subscribe
+    return this.reduxStoreObject.subscribe
   }
 
   get dispatch() {
-    return this.toReduxStoreObject().dispatch
+    return this.reduxStoreObject.dispatch
   }
 }
 

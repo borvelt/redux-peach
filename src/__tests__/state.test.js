@@ -2,33 +2,54 @@ const State = require('../State')
 const Store = require('../Store')
 
 describe('Work with states', () => {
-  let store
-  const rootState = { ids: [1, 2, 3, 4, 5] }
+  const entryState = { ids: [1, 2, 3, 4, 5] }
+  let state
   beforeAll(() => {
-    store = new Store()
-    store.configure({ rootState })
+    state = new State(entryState)
   })
   it('should recieve object', () => {
     expect(() => new State()).toThrow()
   })
-  it('appliction state should be instance of State', () => {
-    expect(store.state instanceof State).toBeTruthy()
+  it('should be equal to rawState', () => {
+    expect(state.rawState).toEqual(entryState)
   })
 
-  it('should return the same', () => {
-    expect(store.state.ids).toEqual(store.toReduxStoreObject().getState().ids)
+  describe('work with store and state', () => {
+    //it's not a unit test.
+    let store = new Store()
+    store.configure()
+
+    it('should throw error beacuse store object needed', () => {
+      expect(() => State.set(entryState)).toThrow()
+    })
+    it('should set State statically be the same', () => {
+      State.set(entryState, store)
+    })
   })
 
-  it('should return undefined', () => {
-    expect(store.state.unknown).toBeUndefined()
+  describe('work with state merge', () => {
+    state = new State(entryState)
+    let newState = state.merge({ name: 'borvelt' })
+    it('should show that merge is immutable', () => {
+      expect(state).toEqual(entryState)
+    })
+    it('should show new State', () => {
+      expect(newState).toEqual({ ids: [1, 2, 3, 4, 5], name: 'borvelt' })
+    })
+    it('should check deep state merging', () => {
+      newState = state.merge({ ids: [] })
+      expect(newState).toEqual({ ids: [] })
+    })
   })
 
-  it('should return merge function and undefined toJS', () => {
-    expect(typeof store.state.merge).toBe(typeof (() => {}))
-    expect(store.state.toJS).toBeUndefined()
-  })
-
-  it('should return immutableObject', () => {
-    expect(store.state.toImmutableObject().toJS()).toEqual(rootState)
+  describe('work with Proxy', () => {
+    it('should be the equal state.ids == entryState.ids', () => {
+      expect(state.ids).toEqual(entryState.ids)
+    })
+    it('should return state keys(email,name)', () => {
+      let ns = new State({ email: 'borvelt@gmail.com', name: 'borvelt' })
+      expect(Object.keys(ns)).toContain('name')
+      expect(Object.keys(ns)).toContain('email')
+    })
   })
 })

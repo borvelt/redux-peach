@@ -34,20 +34,21 @@
     "wrapper",
     "helper",
     "state-manager",
-    "immutable",
     "redux",
     "redux-actions",
     "redux-thunk",
     "redux-middleware",
     "redux-peach",
     "redux-scaffold",
-    "redux-boilerplate"
+    "redux-boilerplate",
+    "action-handler"
   ],
+  "peerDependencies": {
+    "redux": "^4.0.0"
+  },
   "dependencies": {
-    "immutable": "^3.8.2",
     "invariant": "^2.2.4",
-    "lodash.isundefined": "^3.0.1",
-    "redux": "^4.0.0",
+    "lodash.mergewith": "^4.6.1",
     "redux-actions": "^2.6.1",
     "redux-thunk": "^2.3.0"
   },

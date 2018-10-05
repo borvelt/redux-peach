@@ -1,46 +1,51 @@
-const store = require('./src/index')
-
+const Store = require('./src/Store')
+const Action = require('./src/Action')
+const State = require('./src/State')
+const store = new Store()
 store.configure({
   rootState: { users: { list: ['Jim', 'Jack', 'Paul'] }, Counter: 0 },
 })
 
-store.actions.create('INCREMENT', {
-  async: true,
-  onDispatch(value) {
-    return new Promise(resolve =>
-      setTimeout(() => resolve(value * value), 1000),
-    )
-  },
-})
+Action()
+  .setName('INCREMENT')
+  .hookToStore(store)
+  .setAsync(true)
+  .setOnDispatchListener(
+    value =>
+      new Promise(resolve => setTimeout(() => resolve(value * value), 1000)),
+  )
+  .make()
 
-store.actions.handle('INCREMENT', {
-  onSucceed(action, state) {
-    return { Counter: state.Counter + action.payload }
-  },
-})
+Action()
+  .setName('INCREMENT')
+  .hookToStore(store)
+  .onSucceed((action, state) => ({
+    Counter: state.Counter + action.payload,
+  }))
+  .make()
 
-store.actions.handle('INCREMENT', {
-  onSucceed(action, state) {
-    return { Counter: state.Counter + action.payload + action.payload }
-  },
-})
+Action()
+  .setName('INCREMENT')
+  .hookToStore(store)
+  .onSucceed((action, state) => ({
+    Counter: state.Counter + action.payload + action.payload,
+  }))
+  .make()
 
-const increment = store.actions.get('INCREMENT')
+const increment = Action.find('INCREMENT', store)
 
-store.dispatch(increment(4))
+store.dispatch(increment.prepareForDispatch(4))
 
-store.actions.new('DECREMENT', {
-  onDispatch(value) {
-    return value * 2
-  },
-  selfDispatch: true,
-  onDispatchArgs: [66],
-  onSucceed(action, state) {
-    return { Counter: state.Counter - action.payload }
-  },
-})
+Action()
+  .setName('DECREMENT')
+  .hookToStore(store)
+  .setOnDispatchListener(value => value * 2)
+  .setSelfDispatch(true)
+  .setOnDispatchArgs([66])
+  .onSucceed((action, state) => ({ Counter: state.Counter - action.payload }))
+  .make()
 
-store.state = { test: 'redux-peach' }
+State.set({ test: 'redux-peach' }, store)
 
 setTimeout(() => console.log(store.state), 200)
 

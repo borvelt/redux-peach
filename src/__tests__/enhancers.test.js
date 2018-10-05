@@ -6,6 +6,6 @@ describe('enhancers and middlewares as EnhancerComposer', () => {
   })
 
   it('should return function', () => {
-    expect(typeof EnhancerComposer).toBe(typeof (() => {}))
+    expect(typeof EnhancerComposer).toBe(typeof (x => x))
   })
 })
