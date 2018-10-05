@@ -1,6 +1,6 @@
 {
   "name": "redux-peach",
-  "version": "2.0.1",
+  "version": "3.0.1",
   "author": {
     "name": "borvelt",
     "email": "borvelt@gmail.com"
@@ -8,7 +8,7 @@
   "license": "MIT",
   "repository": "https://github.com/borvelt/redux-peach",
   "description": "Eat redux state manager like 🍑",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "module": "src/index.js",
   "scripts": {
     "clean": "rm -rf web dist",
