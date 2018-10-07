@@ -11,6 +11,7 @@ module.exports = {
     chunkFilename: '[name].redux-peach.js',
     publicPath: '/',
     library: 'reduxPeach',
+    globalObject: 'this',
     libraryTarget: 'umd',
   },
   externals: [{ redux: 'redux' }],
