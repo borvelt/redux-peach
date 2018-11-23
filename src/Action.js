@@ -1,7 +1,7 @@
 const { createAction, handleActions } = require('redux-actions')
 const invariant = require('invariant')
 const isReduxStore = require('./IsReduxStore')
-const { isUndefined, isBoolean, isFunction } = require('./Utils')
+const { isUndefined, isBoolean, isFunction, isObject } = require('./Utils')
 const {
   _STARTED,
   _FAILED,
@@ -17,6 +17,7 @@ const {
 class Action {
   constructor() {
     this._async = false
+    this._initialState = undefined
     this._selfDispatch = false
     this._onDispatchArgs = []
     this._handlers = {
@@ -48,7 +49,7 @@ class Action {
     return this
   }
 
-  setAsync(async) {
+  setAsyncFlag(async) {
     invariant(isBoolean(async), 'async flag should be Boolean.')
     this._async = async
     return this
@@ -66,33 +67,53 @@ class Action {
     return this
   }
 
-  setSelfDispatch(value) {
+  setSelfDispatchFlag(value) {
     invariant(isBoolean(value), 'selfDispatch flag should be Boolean.')
     this._selfDispatch = value
     return this
   }
 
-  onHappened(listener = action => action.payload) {
+  setInitialState(state) {
+    invariant(
+      isObject(state),
+      'This Method Not Implemented Yet. Please Use' + ' State.set()',
+    )
+    if (!isUndefined(this._initialState)) {
+      console.warn(
+        'CAUTION: initialState OverWriting, this may cause of' +
+          ' side effects, Please make sure to call this method just on' +
+          ' Action initialization.',
+      )
+    }
+    this._initialState = state
+    return this
+  }
+
+  getInitialState() {
+    return this._initialState
+  }
+
+  setOnHappenedListener(listener = action => action.payload) {
     this._handlers[HAPPENED].push(listener)
     return this
   }
 
-  onStarted(listener = action => action.payload) {
+  setOnStartedListener(listener = action => action.payload) {
     this._handlers[STARTED].push(listener)
     return this
   }
 
-  onSucceed(listener = action => action.payload) {
+  setOnSucceedListener(listener = action => action.payload) {
     this._handlers[SUCCEED].push(listener)
     return this
   }
 
-  onFailed(listener = action => action.payload) {
+  setOnFailedListener(listener = action => action.payload) {
     this._handlers[FAILED].push(listener)
     return this
   }
 
-  onEnded(listener = action => action.payload) {
+  setOnEndedListener(listener = action => action.payload) {
     this._handlers[ENDED].push(listener)
     return this
   }
@@ -103,7 +124,7 @@ class Action {
       'first of all you should make action name',
     )
     try {
-      this._store = Action._getStore(store)
+      this._store = Action._getReduxStore(store)
       return Action.find(this._name, this._store)
     } catch (e) {
       if (!('__actions' in this._store)) {
@@ -139,7 +160,7 @@ class Action {
     if (this._selfDispatch) {
       this._store.dispatch(this.prepareForDispatch(...this._onDispatchArgs))
     }
-    return this
+    return dispatchMaker.bind(this)
   }
 
   prepareForDispatch(args) {
@@ -269,11 +290,27 @@ class Action {
     return args[0]
   }
 
+  static _getReduxStore(store) {
+    let reduxStore
+    try {
+      invariant('__' in store, 'it`s not a Store instance')
+      reduxStore = store.reduxStoreObject
+    } catch (e) {
+      reduxStore = store
+    }
+    invariant(isReduxStore(reduxStore), 'it should be redux store')
+    return reduxStore
+  }
+
   static find(actionName, store) {
-    const result = this._getStore(store).__actions[actionName]
+    const result = Action._getReduxStore(store).__actions[actionName]
     invariant(!isUndefined(result), 'Action NOT found.')
     return result
   }
+}
+
+const dispatchMaker = function(...args) {
+  return this.prepareForDispatch(...args)
 }
 
 const ActionProxy = new Proxy(Action, {
