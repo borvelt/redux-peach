@@ -32,16 +32,12 @@ class Store {
     return this.reduxStoreObject.__actions
   }
 
-  set state(newState) {
-    State.set(newState, this.reduxStoreObject)
-  }
-
   findAction(actionName) {
     return Action.find(actionName, this.reduxStoreObject)
   }
 
-  get state() {
-    return this.reduxStoreObject.getState()
+  setState(newState) {
+    State.set(newState, this.reduxStoreObject)
   }
 
   get getState() {

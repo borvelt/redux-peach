@@ -17,9 +17,9 @@ class StateClass {
   static set(state, store) {
     Action()
       .setName(DEFAULT_STATE_SET)
-      .onSucceed()
+      .setOnSucceedListener()
       .hookToStore(store)
-      .setSelfDispatch(true)
+      .setSelfDispatchFlag(true)
       .setOnDispatchArgs(state)
       .make()
   }

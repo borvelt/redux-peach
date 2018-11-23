@@ -19,20 +19,21 @@ describe('Create Action', () => {
   beforeAll(() => {
     action = new Action()
       .setName('TEST')
-      .setAsync(true)
+      .setAsyncFlag(true)
       .setOnDispatchListener(x)
       .setOnDispatchArgs([10])
-      .setSelfDispatch(true)
-      .onHappened(x)
-      .onSucceed(x)
-      .onEnded(x)
-      .onStarted(x)
-      .onFailed(x)
+      .setSelfDispatchFlag(true)
+      .setOnHappenedListener(x)
+      .setOnSucceedListener(x)
+      .setOnEndedListener(x)
+      .setOnStartedListener(x)
+      .setOnFailedListener(x)
       .setMetaCreator(x)
       .setPayloadCreator(x)
   })
   it('Check action attributes', () => {
     expect(action._name).toEqual('TEST')
+    expect(action._defaultState).toBe(null)
     expect(action._async).toBeTruthy()
     expect(action._onDispatch).toBe(x)
     expect(action._onDispatchArgs).toEqual([[10]])
@@ -47,7 +48,7 @@ describe('Create Action', () => {
   })
 })
 
-describe('check hookStore', () => {
+describe('check hookStore and set Default State', () => {
   let store = new Store()
   store.configure()
   it('should throw error', () => {
@@ -57,6 +58,13 @@ describe('check hookStore', () => {
     let ac = new Action().setName('ac').hookToStore(store)
     expect(store.findAction('ac')).toBe(ac)
   })
+  // it('should set default state', () => {
+  //   new Action()
+  //     .setName('TEST_FETCH')
+  //     .hookToStore(store)
+  //     .setDefaultState({ test: 10 })
+  //   expect(store.getState().test).toEqual(10)
+  // })
 })
 
 describe('Check static methods', () => {
@@ -67,8 +75,8 @@ describe('Check static methods', () => {
     expect(Action.find('ac', store)).toBe(ac)
   })
   it('should return reduxStore', () => {
-    expect(Action._getStore(store)).toBe(store.reduxStoreObject)
-    expect(Action._getStore(store.reduxStoreObject)).toBe(
+    expect(Action._getReduxStore(store)).toBe(store.reduxStoreObject)
+    expect(Action._getReduxStore(store.reduxStoreObject)).toBe(
       store.reduxStoreObject,
     )
   })
@@ -95,11 +103,11 @@ describe('Check static methods', () => {
       let actionCheckHandlers = new Action()
         .setName('aaa')
         .hookToStore(store)
-        .onHappened(x)
-        .onSucceed(x)
-        .onEnded(x)
-        .onStarted(x)
-        .onFailed(x)
+        .setOnHappenedListener(x)
+        .setOnSucceedListener(x)
+        .setOnEndedListener(x)
+        .setOnStartedListener(x)
+        .setOnFailedListener(x)
       let handlers = actionCheckHandlers
         ._makeTypes()
         ._makeSubActions()
@@ -109,6 +117,17 @@ describe('Check static methods', () => {
       expect(Object.keys(handlers)).toContain('aaa_FAILED')
       expect(Object.keys(handlers)).toContain('aaa_STARTED')
       expect(Object.keys(handlers)).toContain('aaa_ENDED')
+    })
+    it('should work without prepareForFetch', () => {
+      const ac = new Action()
+        .setName('noPrepareForFetch')
+        .setOnSucceedListener()
+        .hookToStore(store)
+      const action = ac.make()
+      store.dispatch(action({ test: 10 }))
+      expect(store.getState().test).toEqual(10)
+      store.dispatch(ac.prepareForDispatch({test: 20}))
+      expect(store.getState().test).toEqual(20)
     })
   })
 })
