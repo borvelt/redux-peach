@@ -9,7 +9,7 @@ store.configure({
 Action()
   .setName('INCREMENT')
   .hookToStore(store)
-  .setAsync(true)
+  .setAsyncFlag(true)
   .setOnDispatchListener(
     value =>
       new Promise(resolve => setTimeout(() => resolve(value * value), 1000)),
@@ -19,7 +19,7 @@ Action()
 Action()
   .setName('INCREMENT')
   .hookToStore(store)
-  .onSucceed((action, state) => ({
+  .setOnSucceedListener((action, state) => ({
     Counter: state.Counter + action.payload,
   }))
   .make()
@@ -27,7 +27,7 @@ Action()
 Action()
   .setName('INCREMENT')
   .hookToStore(store)
-  .onSucceed((action, state) => ({
+  .setOnSucceedListener((action, state) => ({
     Counter: state.Counter + action.payload + action.payload,
   }))
   .make()
@@ -40,13 +40,15 @@ Action()
   .setName('DECREMENT')
   .hookToStore(store)
   .setOnDispatchListener(value => value * 2)
-  .setSelfDispatch(true)
+  .setSelfDispatchFlag(true)
   .setOnDispatchArgs([66])
-  .onSucceed((action, state) => ({ Counter: state.Counter - action.payload }))
+  .setOnSucceedListener((action, state) => ({
+    Counter: state.Counter - action.payload,
+  }))
   .make()
 
 State.set({ test: 'redux-peach' }, store)
 
-setTimeout(() => console.log(store.state), 200)
+setTimeout(() => console.log(store.getState()), 200)
 
-setTimeout(() => console.log(store.state), 1001)
+setTimeout(() => console.log(store.getState()), 1001)

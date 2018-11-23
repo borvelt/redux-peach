@@ -49,7 +49,6 @@
   "dependencies": {
     "invariant": "^2.2.4",
     "lodash.mergewith": "^4.6.1",
-    "object-maker": "^1.0.1",
     "redux": "^4.0.1",
     "redux-actions": "^2.6.1",
     "redux-thunk": "^2.3.0"

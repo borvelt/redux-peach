@@ -1,7 +1,14 @@
 const { createAction, handleActions } = require('redux-actions')
+const objectMaker = require('object-maker').default
 const invariant = require('invariant')
 const isReduxStore = require('./IsReduxStore')
-const { isUndefined, isBoolean, isFunction, isObject } = require('./Utils')
+const {
+  isUndefined,
+  isBoolean,
+  isFunction,
+  isObject,
+  isString,
+} = require('./Utils')
 const {
   _STARTED,
   _FAILED,
@@ -17,6 +24,7 @@ const {
 class Action {
   constructor() {
     this._async = false
+    this._prefix = undefined
     this._initialState = undefined
     this._selfDispatch = false
     this._onDispatchArgs = []
@@ -67,6 +75,16 @@ class Action {
     return this
   }
 
+  setPrefix(prefix) {
+    invariant(isString(prefix), 'Prefix should be in string type.')
+    this._prefix = prefix
+    return this
+  }
+
+  getPrefix() {
+    return this._prefix
+  }
+
   setSelfDispatchFlag(value) {
     invariant(isBoolean(value), 'selfDispatch flag should be Boolean.')
     this._selfDispatch = value
@@ -74,10 +92,7 @@ class Action {
   }
 
   setInitialState(state) {
-    invariant(
-      isObject(state),
-      'This Method Not Implemented Yet. Please Use' + ' State.set()',
-    )
+    invariant(isObject(state), 'State should be Object type.')
     if (!isUndefined(this._initialState)) {
       console.warn(
         'CAUTION: initialState OverWriting, this may cause of' +
@@ -85,7 +100,7 @@ class Action {
           ' Action initialization.',
       )
     }
-    this._initialState = state
+    this._initialState = objectMaker(this._prefix, state)
     return this
   }
 
@@ -137,18 +152,6 @@ class Action {
     }
   }
 
-  static _getStore(store) {
-    let reduxStore
-    try {
-      invariant('__' in store, 'it`s not a Store instance')
-      reduxStore = store.reduxStoreObject
-    } catch (e) {
-      reduxStore = store
-    }
-    invariant(isReduxStore(reduxStore), 'it should be redux store')
-    return reduxStore
-  }
-
   make() {
     invariant(
       !isUndefined(this._store) && !isUndefined(this._store.__actions),
@@ -182,7 +185,7 @@ class Action {
       handlers[this._types[type]] = (state, action) => {
         invariant('merge' in state, 'State object should have merge method.')
         for (let handler of this._handlers[type]) {
-          state = state.merge(handler(action, state))
+          state = state.merge(objectMaker(this._prefix, handler(action, state)))
         }
         return state
       }
@@ -288,6 +291,18 @@ class Action {
     args.pop()
     args.pop()
     return args[0]
+  }
+
+  static _getStore(store) {
+    let reduxStore
+    try {
+      invariant('__' in store, 'it`s not a Store instance')
+      reduxStore = store.reduxStoreObject
+    } catch (e) {
+      reduxStore = store
+    }
+    invariant(isReduxStore(reduxStore), 'it should be redux store')
+    return reduxStore
   }
 
   static _getReduxStore(store) {
