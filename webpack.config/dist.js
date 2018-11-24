@@ -1,5 +1,4 @@
 const path = require('path')
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
 
 module.exports = {
@@ -35,7 +34,6 @@ module.exports = {
     new CleanWebpackPlugin(['dist'], {
       root: path.join(__dirname, '..'),
     }),
-    new UglifyJsPlugin(),
   ],
   resolve: {
     alias: {},

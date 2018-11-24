@@ -17,17 +17,16 @@ describe('Create Store Object', () => {
     expect(typeof store.configure).toBe(typeof (x => x))
   })
 
-  it('should show state currectly', () => {
+  it('should show state correctly', () => {
     store.configure({ rootState })
-    expect(store.state).toBe(store.reduxStoreObject.getState())
     expect(store.getState()).toEqual(new State(rootState))
   })
 
   describe('Store with State', () => {
     it('should show store with state', () => {
       store.configure({ rootState })
-      store.state = { test: 20 }
-      expect(store.state).toEqual({ ...rootState, test: 20 })
+      store.setState({ test: 20 })
+      expect(store.getState()).toEqual({ ...rootState, test: 20 })
     })
     it('should show store actions', () => {
       expect(store.actions[DEFAULT_STATE_SET]).toBeInstanceOf(Action)
@@ -36,9 +35,8 @@ describe('Create Store Object', () => {
 
   describe('Store find Action', () => {
     it('should return true action source', () => {
-      expect(store.actions[DEFAULT_STATE_SET]).toBe(
-        store.findAction(DEFAULT_STATE_SET),
-      )
+      const [, action] = store.findAction(DEFAULT_STATE_SET)
+      expect(store.actions[DEFAULT_STATE_SET]).toBe(action)
     })
   })
 })

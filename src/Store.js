@@ -40,8 +40,8 @@ class Store {
     return Action.find(actionName, this.reduxStoreObject)
   }
 
-  get state() {
-    return this.reduxStoreObject.getState()
+  setState(newState) {
+    State.set(newState, this.reduxStoreObject)
   }
 
   get getState() {
