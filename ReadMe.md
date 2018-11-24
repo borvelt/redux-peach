@@ -236,7 +236,17 @@ As I mentioned above, if you have store with very special configurations like
 persistence or some development tools like redux-devtools or etc, you can make 
 your store then import to `redux-peach`.Just pass your store to constructor.
 
-_but you should add redux-thunk middleware to your store while store creation._
+**You should just do these two steps:**
+- _while store creating pass `rootReducer` as reducer parameter to 
+`createStore`._
+```javascript
+import {rootReducer} from 'redux-peach'
+const store = createStore(rootReducer({}), ...)
+```
+- _add redux-thunk middleware to your store while store 
+creation._
+
+**And then run this:**
 ```javascript
 const store = new Store(reduxStore)
 ```
@@ -256,15 +266,17 @@ export const newAction = actionName => Action(actionName, store)
 Now import every where you want in your react project
 #### react Context
 You can create [context](https://reactjs.org/docs/context.html) in react and 
-provide your store in root of your project and consume it every where.Or until react 16.x you can use [legacy context](https://reactjs.org/docs/legacy-context.html).
+provide your store in root of your project and consume it every where.Or 
+until react 16.x you can use [legacy context](https://reactjs
+.org/docs/legacy-context.html) see sample code below.
 
-If you are using [react-redux](https://github.com/reduxjs/react-redux) store object will provide with `provider` component.Just consume it
+If you are using [react-redux](https://github.com/reduxjs/react-redux) store 
+object will provide with `provider` component.Just consume it
 ```javascript
 class A extends Component {
   static contextTypes = {
     store: PropTypes.object,
   }
-
   constructor(props, context) {
     super(props, context)
     this.store = context.store
@@ -278,7 +290,7 @@ class A extends Component {
 Run tests with `npm test`.
 Test framework is jest.
 
-*45 Tests passed.*
+*50 Tests passed.*
 
 
 ## Contribution

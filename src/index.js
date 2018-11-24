@@ -5,3 +5,4 @@ const State = require('./State')
 exports.Store = Store
 exports.State = State
 exports.Action = Action
+exports.rootReducer = (rootState = {}) => () => new State(rootState)
