@@ -59,13 +59,16 @@ We have two type of actions and some sub actions:
   * __Async actions__
 
       Async actions contains four sub actions, [actionName_STARTED, 
-      actionName_onSucceed, actionName_onEnded, actionName_onFailed]
+      actionName_Succeed, actionName_Ended, actionName_Failed]
 
 #### Handle Actions
-According to your action type (async flag) some sub actions will dispatch that you can handle by some function like this:
-  sub action[actionName_SUCCEED] -> dispatch -> will handle with onSucceed function
+According to your action type (async flag) some sub actions will dispatch 
+that you can handle by some function like this:
+  sub action[actionName_SUCCEED] -> dispatch -> will handle with 
+  setOnSucceedListener function
 
-  sub action[actionName_FAILED] -> dispatch -> will handle with onFailed function
+  sub action[actionName_FAILED] -> dispatch -> will handle with 
+  setOnFailedListener function
 
 #### Handle actions that will be dispatch by other modules
 Some libraries has their own actions, you can handle them by create new action with same name and catch them with `.onHappened(x => x)` method.
