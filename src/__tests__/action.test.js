@@ -58,12 +58,12 @@ describe('check hookStore and set InitialState', () => {
     const [, action] = store.findAction('ac')
     expect(action).toBe(ac)
   })
-  it('should set Prefix for states', () => {
+  it('should set Scope for states', () => {
     const action = new Action()
       .setName('TEST_FETCH')
       .hookToStore(store)
-      .setPrefix('...science..computer..')
-    expect(action.getPrefix()).toEqual('science.computer')
+      .setScope('...science..computer..')
+    expect(action.getScope()).toEqual('science.computer')
   })
   it('should set initial State', () => {
     const action = new Action()
