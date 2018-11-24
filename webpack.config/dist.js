@@ -13,7 +13,7 @@ module.exports = {
     globalObject: 'this',
     libraryTarget: 'umd',
   },
-  externals: [{ redux: 'redux' }],
+  externals: ['redux'],
   module: {
     rules: [
       {
