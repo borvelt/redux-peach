@@ -71,7 +71,7 @@ that you can handle by some function like this:
   setOnFailedListener function
 
 #### Handle actions that will be dispatch by other modules
-Some libraries has their own actions, you can handle them by create new action with same name and catch them with `.onHappened(x => x)` method.
+Some libraries has their own actions, you can handle them by create new action with same name and catch them with `.setOnHappenedListener(x => x)` method.
 
 #### [payloadCreator and metaCreator definition](https://redux-actions.js.org/api/createaction#createactiontype-payloadcreator-metacreator)
 
