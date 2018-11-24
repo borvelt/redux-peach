@@ -1,5 +1,6 @@
 const { createAction, handleActions } = require('redux-actions')
 const objectMaker = require('object-maker').default
+const { removeExtraDots, mapStringToObject } = require('object-maker')
 const invariant = require('invariant')
 const isReduxStore = require('./IsReduxStore')
 const {
@@ -24,7 +25,7 @@ const {
 class Action {
   constructor() {
     this._async = false
-    this._prefix = undefined
+    this._scope = undefined
     this._initialState = undefined
     this._selfDispatch = false
     this._onDispatchArgs = []
@@ -75,14 +76,20 @@ class Action {
     return this
   }
 
-  setPrefix(prefix) {
+  setScope(prefix) {
     invariant(isString(prefix), 'Prefix should be in string type.')
-    this._prefix = prefix
+    if (!isUndefined(this._initialState)) {
+      console.warn(
+        'CAUTION: You are try to set prefix after state' +
+          ' initialization please be aware that this changes will DISCARD.',
+      )
+    }
+    this._scope = removeExtraDots(prefix)
     return this
   }
 
-  getPrefix() {
-    return this._prefix
+  getScope() {
+    return this._scope
   }
 
   setSelfDispatchFlag(value) {
@@ -100,7 +107,7 @@ class Action {
           ' Action initialization.',
       )
     }
-    this._initialState = objectMaker(this._prefix, state)
+    this._initialState = objectMaker(this._scope, state)
     return this
   }
 
@@ -140,7 +147,8 @@ class Action {
     )
     try {
       this._store = Action._getReduxStore(store)
-      return Action.find(this._name, this._store)
+      const [, action] = Action.find(this._name, this._store)
+      return action
     } catch (e) {
       if (!('__actions' in this._store)) {
         this._store.__actions = {}
@@ -185,7 +193,12 @@ class Action {
       handlers[this._types[type]] = (state, action) => {
         invariant('merge' in state, 'State object should have merge method.')
         for (let handler of this._handlers[type]) {
-          state = state.merge(objectMaker(this._prefix, handler(action, state)))
+          state = state.merge(
+            objectMaker(
+              this._scope,
+              handler(action, mapStringToObject(this._scope, state)),
+            ),
+          )
         }
         return state
       }
@@ -320,7 +333,7 @@ class Action {
   static find(actionName, store) {
     const result = Action._getReduxStore(store).__actions[actionName]
     invariant(!isUndefined(result), 'Action NOT found.')
-    return result
+    return [dispatchMaker.bind(result), result]
   }
 }
 
@@ -329,7 +342,17 @@ const dispatchMaker = function(...args) {
 }
 
 const ActionProxy = new Proxy(Action, {
-  apply: target => new target(),
+  apply: (target, thisArg, args) => {
+    const [actionName, store] = args
+    let action = new target()
+    if(!isUndefined(actionName)) {
+      action = action.setName(actionName)
+    }
+    if(!isUndefined(store)) {
+      action = action.hookToStore(store)
+    }
+    return action
+  },
 })
 
 module.exports = ActionProxy

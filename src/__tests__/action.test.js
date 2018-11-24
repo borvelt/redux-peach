@@ -47,31 +47,40 @@ describe('Create Action', () => {
   })
 })
 
-describe('check hookStore and set Default State', () => {
-  let store = new Store()
+describe('check hookStore and set InitialState', () => {
+  const store = new Store()
   store.configure()
   it('should throw error', () => {
     expect(() => new Action().hookToStore(store)).toThrow()
   })
   it('should hook to store', () => {
-    let ac = new Action().setName('ac').hookToStore(store)
-    expect(store.findAction('ac')).toBe(ac)
+    const ac = new Action().setName('ac').hookToStore(store)
+    const [, action] = store.findAction('ac')
+    expect(action).toBe(ac)
   })
-  // it('should set default state', () => {
-  //   new Action()
-  //     .setName('TEST_FETCH')
-  //     .hookToStore(store)
-  //     .setDefaultState({ test: 10 })
-  //   expect(store.getState().test).toEqual(10)
-  // })
+  it('should set Prefix for states', () => {
+    const action = new Action()
+      .setName('TEST_FETCH')
+      .hookToStore(store)
+      .setPrefix('...science..computer..')
+    expect(action.getPrefix()).toEqual('science.computer')
+  })
+  it('should set initial State', () => {
+    const action = new Action()
+      .setName('TEST_INITIAL_STATE')
+      .hookToStore(store)
+      .setInitialState({ test: 10 })
+    expect(action.getInitialState()).toEqual({ test: 10 })
+  })
 })
 
 describe('Check static methods', () => {
   let store = new Store()
   store.configure()
   it('should find action', () => {
-    let ac = new Action().setName('ac').hookToStore(store)
-    expect(Action.find('ac', store)).toBe(ac)
+    const ac = new Action().setName('ac').hookToStore(store)
+    const [, action] = Action.find('ac', store)
+    expect(action).toBe(ac)
   })
   it('should return reduxStore', () => {
     expect(Action._getReduxStore(store)).toBe(store.reduxStoreObject)
@@ -125,7 +134,7 @@ describe('Check static methods', () => {
       const action = ac.make()
       store.dispatch(action({ test: 10 }))
       expect(store.getState().test).toEqual(10)
-      store.dispatch(ac.prepareForDispatch({test: 20}))
+      store.dispatch(ac.prepareForDispatch({ test: 20 }))
       expect(store.getState().test).toEqual(20)
     })
   })

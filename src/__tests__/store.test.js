@@ -35,9 +35,8 @@ describe('Create Store Object', () => {
 
   describe('Store find Action', () => {
     it('should return true action source', () => {
-      expect(store.actions[DEFAULT_STATE_SET]).toBe(
-        store.findAction(DEFAULT_STATE_SET),
-      )
+      const [, action] = store.findAction(DEFAULT_STATE_SET)
+      expect(store.actions[DEFAULT_STATE_SET]).toBe(action)
     })
   })
 })
